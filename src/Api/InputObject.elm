@@ -4,8 +4,8 @@
 
 module Api.InputObject exposing (..)
 
-import Api.Enum.Games_constraint
-import Api.Enum.Games_update_column
+import Api.Enum.Game_constraint
+import Api.Enum.Game_update_column
 import Api.Enum.Order_by
 import Api.Interface
 import Api.Object
@@ -66,8 +66,8 @@ encodeBoolean_comparison_exp input =
         [ ( "_eq", Encode.bool |> Encode.optional input.eq_ ), ( "_gt", Encode.bool |> Encode.optional input.gt_ ), ( "_gte", Encode.bool |> Encode.optional input.gte_ ), ( "_in", (Encode.bool |> Encode.list) |> Encode.optional input.in_ ), ( "_is_null", Encode.bool |> Encode.optional input.is_null_ ), ( "_lt", Encode.bool |> Encode.optional input.lt_ ), ( "_lte", Encode.bool |> Encode.optional input.lte_ ), ( "_neq", Encode.bool |> Encode.optional input.neq_ ), ( "_nin", (Encode.bool |> Encode.list) |> Encode.optional input.nin_ ) ]
 
 
-buildGames_aggregate_order_by : (Games_aggregate_order_byOptionalFields -> Games_aggregate_order_byOptionalFields) -> Games_aggregate_order_by
-buildGames_aggregate_order_by fillOptionals =
+buildGame_aggregate_order_by : (Game_aggregate_order_byOptionalFields -> Game_aggregate_order_byOptionalFields) -> Game_aggregate_order_by
+buildGame_aggregate_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -76,91 +76,91 @@ buildGames_aggregate_order_by fillOptionals =
     { avg = optionals.avg, count = optionals.count, max = optionals.max, min = optionals.min, stddev = optionals.stddev, stddev_pop = optionals.stddev_pop, stddev_samp = optionals.stddev_samp, sum = optionals.sum, var_pop = optionals.var_pop, var_samp = optionals.var_samp, variance = optionals.variance }
 
 
-type alias Games_aggregate_order_byOptionalFields =
-    { avg : OptionalArgument Games_avg_order_by
+type alias Game_aggregate_order_byOptionalFields =
+    { avg : OptionalArgument Game_avg_order_by
     , count : OptionalArgument Api.Enum.Order_by.Order_by
-    , max : OptionalArgument Games_max_order_by
-    , min : OptionalArgument Games_min_order_by
-    , stddev : OptionalArgument Games_stddev_order_by
-    , stddev_pop : OptionalArgument Games_stddev_pop_order_by
-    , stddev_samp : OptionalArgument Games_stddev_samp_order_by
-    , sum : OptionalArgument Games_sum_order_by
-    , var_pop : OptionalArgument Games_var_pop_order_by
-    , var_samp : OptionalArgument Games_var_samp_order_by
-    , variance : OptionalArgument Games_variance_order_by
+    , max : OptionalArgument Game_max_order_by
+    , min : OptionalArgument Game_min_order_by
+    , stddev : OptionalArgument Game_stddev_order_by
+    , stddev_pop : OptionalArgument Game_stddev_pop_order_by
+    , stddev_samp : OptionalArgument Game_stddev_samp_order_by
+    , sum : OptionalArgument Game_sum_order_by
+    , var_pop : OptionalArgument Game_var_pop_order_by
+    , var_samp : OptionalArgument Game_var_samp_order_by
+    , variance : OptionalArgument Game_variance_order_by
     }
 
 
-{-| Type for the Games\_aggregate\_order\_by input object.
+{-| Type for the Game\_aggregate\_order\_by input object.
 -}
-type alias Games_aggregate_order_by =
-    { avg : OptionalArgument Games_avg_order_by
+type alias Game_aggregate_order_by =
+    { avg : OptionalArgument Game_avg_order_by
     , count : OptionalArgument Api.Enum.Order_by.Order_by
-    , max : OptionalArgument Games_max_order_by
-    , min : OptionalArgument Games_min_order_by
-    , stddev : OptionalArgument Games_stddev_order_by
-    , stddev_pop : OptionalArgument Games_stddev_pop_order_by
-    , stddev_samp : OptionalArgument Games_stddev_samp_order_by
-    , sum : OptionalArgument Games_sum_order_by
-    , var_pop : OptionalArgument Games_var_pop_order_by
-    , var_samp : OptionalArgument Games_var_samp_order_by
-    , variance : OptionalArgument Games_variance_order_by
+    , max : OptionalArgument Game_max_order_by
+    , min : OptionalArgument Game_min_order_by
+    , stddev : OptionalArgument Game_stddev_order_by
+    , stddev_pop : OptionalArgument Game_stddev_pop_order_by
+    , stddev_samp : OptionalArgument Game_stddev_samp_order_by
+    , sum : OptionalArgument Game_sum_order_by
+    , var_pop : OptionalArgument Game_var_pop_order_by
+    , var_samp : OptionalArgument Game_var_samp_order_by
+    , variance : OptionalArgument Game_variance_order_by
     }
 
 
-{-| Encode a Games\_aggregate\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_aggregate\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_aggregate_order_by : Games_aggregate_order_by -> Value
-encodeGames_aggregate_order_by input =
+encodeGame_aggregate_order_by : Game_aggregate_order_by -> Value
+encodeGame_aggregate_order_by input =
     Encode.maybeObject
-        [ ( "avg", encodeGames_avg_order_by |> Encode.optional input.avg ), ( "count", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.count ), ( "max", encodeGames_max_order_by |> Encode.optional input.max ), ( "min", encodeGames_min_order_by |> Encode.optional input.min ), ( "stddev", encodeGames_stddev_order_by |> Encode.optional input.stddev ), ( "stddev_pop", encodeGames_stddev_pop_order_by |> Encode.optional input.stddev_pop ), ( "stddev_samp", encodeGames_stddev_samp_order_by |> Encode.optional input.stddev_samp ), ( "sum", encodeGames_sum_order_by |> Encode.optional input.sum ), ( "var_pop", encodeGames_var_pop_order_by |> Encode.optional input.var_pop ), ( "var_samp", encodeGames_var_samp_order_by |> Encode.optional input.var_samp ), ( "variance", encodeGames_variance_order_by |> Encode.optional input.variance ) ]
+        [ ( "avg", encodeGame_avg_order_by |> Encode.optional input.avg ), ( "count", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.count ), ( "max", encodeGame_max_order_by |> Encode.optional input.max ), ( "min", encodeGame_min_order_by |> Encode.optional input.min ), ( "stddev", encodeGame_stddev_order_by |> Encode.optional input.stddev ), ( "stddev_pop", encodeGame_stddev_pop_order_by |> Encode.optional input.stddev_pop ), ( "stddev_samp", encodeGame_stddev_samp_order_by |> Encode.optional input.stddev_samp ), ( "sum", encodeGame_sum_order_by |> Encode.optional input.sum ), ( "var_pop", encodeGame_var_pop_order_by |> Encode.optional input.var_pop ), ( "var_samp", encodeGame_var_samp_order_by |> Encode.optional input.var_samp ), ( "variance", encodeGame_variance_order_by |> Encode.optional input.variance ) ]
 
 
-buildGames_arr_rel_insert_input : Games_arr_rel_insert_inputRequiredFields -> (Games_arr_rel_insert_inputOptionalFields -> Games_arr_rel_insert_inputOptionalFields) -> Games_arr_rel_insert_input
-buildGames_arr_rel_insert_input required fillOptionals =
+buildGame_arr_rel_insert_input : Game_arr_rel_insert_inputRequiredFields -> (Game_arr_rel_insert_inputOptionalFields -> Game_arr_rel_insert_inputOptionalFields) -> Game_arr_rel_insert_input
+buildGame_arr_rel_insert_input required fillOptionals =
     let
         optionals =
             fillOptionals
                 { on_conflict = Absent }
     in
-    Games_arr_rel_insert_input { data = required.data, on_conflict = optionals.on_conflict }
+    Game_arr_rel_insert_input { data = required.data, on_conflict = optionals.on_conflict }
 
 
-type alias Games_arr_rel_insert_inputRequiredFields =
-    { data : List Games_insert_input }
+type alias Game_arr_rel_insert_inputRequiredFields =
+    { data : List Game_insert_input }
 
 
-type alias Games_arr_rel_insert_inputOptionalFields =
-    { on_conflict : OptionalArgument Games_on_conflict }
+type alias Game_arr_rel_insert_inputOptionalFields =
+    { on_conflict : OptionalArgument Game_on_conflict }
 
 
-{-| Type alias for the `Games_arr_rel_insert_input` attributes. Note that this type
-needs to use the `Games_arr_rel_insert_input` type (not just a plain type alias) because it has
+{-| Type alias for the `Game_arr_rel_insert_input` attributes. Note that this type
+needs to use the `Game_arr_rel_insert_input` type (not just a plain type alias) because it has
 references to itself either directly (recursive) or indirectly (circular). See
 <https://github.com/dillonkearns/elm-graphql/issues/33>.
 -}
-type alias Games_arr_rel_insert_inputRaw =
-    { data : List Games_insert_input
-    , on_conflict : OptionalArgument Games_on_conflict
+type alias Game_arr_rel_insert_inputRaw =
+    { data : List Game_insert_input
+    , on_conflict : OptionalArgument Game_on_conflict
     }
 
 
-{-| Type for the Games\_arr\_rel\_insert\_input input object.
+{-| Type for the Game\_arr\_rel\_insert\_input input object.
 -}
-type Games_arr_rel_insert_input
-    = Games_arr_rel_insert_input Games_arr_rel_insert_inputRaw
+type Game_arr_rel_insert_input
+    = Game_arr_rel_insert_input Game_arr_rel_insert_inputRaw
 
 
-{-| Encode a Games\_arr\_rel\_insert\_input into a value that can be used as an argument.
+{-| Encode a Game\_arr\_rel\_insert\_input into a value that can be used as an argument.
 -}
-encodeGames_arr_rel_insert_input : Games_arr_rel_insert_input -> Value
-encodeGames_arr_rel_insert_input (Games_arr_rel_insert_input input) =
+encodeGame_arr_rel_insert_input : Game_arr_rel_insert_input -> Value
+encodeGame_arr_rel_insert_input (Game_arr_rel_insert_input input) =
     Encode.maybeObject
-        [ ( "data", (encodeGames_insert_input |> Encode.list) input.data |> Just ), ( "on_conflict", encodeGames_on_conflict |> Encode.optional input.on_conflict ) ]
+        [ ( "data", (encodeGame_insert_input |> Encode.list) input.data |> Just ), ( "on_conflict", encodeGame_on_conflict |> Encode.optional input.on_conflict ) ]
 
 
-buildGames_avg_order_by : (Games_avg_order_byOptionalFields -> Games_avg_order_byOptionalFields) -> Games_avg_order_by
-buildGames_avg_order_by fillOptionals =
+buildGame_avg_order_by : (Game_avg_order_byOptionalFields -> Game_avg_order_byOptionalFields) -> Game_avg_order_by
+buildGame_avg_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -169,38 +169,38 @@ buildGames_avg_order_by fillOptionals =
     { id = optionals.id }
 
 
-type alias Games_avg_order_byOptionalFields =
+type alias Game_avg_order_byOptionalFields =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Type for the Games\_avg\_order\_by input object.
+{-| Type for the Game\_avg\_order\_by input object.
 -}
-type alias Games_avg_order_by =
+type alias Game_avg_order_by =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Encode a Games\_avg\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_avg\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_avg_order_by : Games_avg_order_by -> Value
-encodeGames_avg_order_by input =
+encodeGame_avg_order_by : Game_avg_order_by -> Value
+encodeGame_avg_order_by input =
     Encode.maybeObject
         [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
-buildGames_bool_exp : (Games_bool_expOptionalFields -> Games_bool_expOptionalFields) -> Games_bool_exp
-buildGames_bool_exp fillOptionals =
+buildGame_bool_exp : (Game_bool_expOptionalFields -> Game_bool_expOptionalFields) -> Game_bool_exp
+buildGame_bool_exp fillOptionals =
     let
         optionals =
             fillOptionals
                 { and_ = Absent, not_ = Absent, or_ = Absent, active = Absent, created_at = Absent, id = Absent, name = Absent, updated_at = Absent }
     in
-    Games_bool_exp { and_ = optionals.and_, not_ = optionals.not_, or_ = optionals.or_, active = optionals.active, created_at = optionals.created_at, id = optionals.id, name = optionals.name, updated_at = optionals.updated_at }
+    Game_bool_exp { and_ = optionals.and_, not_ = optionals.not_, or_ = optionals.or_, active = optionals.active, created_at = optionals.created_at, id = optionals.id, name = optionals.name, updated_at = optionals.updated_at }
 
 
-type alias Games_bool_expOptionalFields =
-    { and_ : OptionalArgument (List (Maybe Games_bool_exp))
-    , not_ : OptionalArgument Games_bool_exp
-    , or_ : OptionalArgument (List (Maybe Games_bool_exp))
+type alias Game_bool_expOptionalFields =
+    { and_ : OptionalArgument (List (Maybe Game_bool_exp))
+    , not_ : OptionalArgument Game_bool_exp
+    , or_ : OptionalArgument (List (Maybe Game_bool_exp))
     , active : OptionalArgument Boolean_comparison_exp
     , created_at : OptionalArgument Timestamptz_comparison_exp
     , id : OptionalArgument Int_comparison_exp
@@ -209,15 +209,15 @@ type alias Games_bool_expOptionalFields =
     }
 
 
-{-| Type alias for the `Games_bool_exp` attributes. Note that this type
-needs to use the `Games_bool_exp` type (not just a plain type alias) because it has
+{-| Type alias for the `Game_bool_exp` attributes. Note that this type
+needs to use the `Game_bool_exp` type (not just a plain type alias) because it has
 references to itself either directly (recursive) or indirectly (circular). See
 <https://github.com/dillonkearns/elm-graphql/issues/33>.
 -}
-type alias Games_bool_expRaw =
-    { and_ : OptionalArgument (List (Maybe Games_bool_exp))
-    , not_ : OptionalArgument Games_bool_exp
-    , or_ : OptionalArgument (List (Maybe Games_bool_exp))
+type alias Game_bool_expRaw =
+    { and_ : OptionalArgument (List (Maybe Game_bool_exp))
+    , not_ : OptionalArgument Game_bool_exp
+    , or_ : OptionalArgument (List (Maybe Game_bool_exp))
     , active : OptionalArgument Boolean_comparison_exp
     , created_at : OptionalArgument Timestamptz_comparison_exp
     , id : OptionalArgument Int_comparison_exp
@@ -226,22 +226,22 @@ type alias Games_bool_expRaw =
     }
 
 
-{-| Type for the Games\_bool\_exp input object.
+{-| Type for the Game\_bool\_exp input object.
 -}
-type Games_bool_exp
-    = Games_bool_exp Games_bool_expRaw
+type Game_bool_exp
+    = Game_bool_exp Game_bool_expRaw
 
 
-{-| Encode a Games\_bool\_exp into a value that can be used as an argument.
+{-| Encode a Game\_bool\_exp into a value that can be used as an argument.
 -}
-encodeGames_bool_exp : Games_bool_exp -> Value
-encodeGames_bool_exp (Games_bool_exp input) =
+encodeGame_bool_exp : Game_bool_exp -> Value
+encodeGame_bool_exp (Game_bool_exp input) =
     Encode.maybeObject
-        [ ( "_and", (encodeGames_bool_exp |> Encode.maybe |> Encode.list) |> Encode.optional input.and_ ), ( "_not", encodeGames_bool_exp |> Encode.optional input.not_ ), ( "_or", (encodeGames_bool_exp |> Encode.maybe |> Encode.list) |> Encode.optional input.or_ ), ( "active", encodeBoolean_comparison_exp |> Encode.optional input.active ), ( "created_at", encodeTimestamptz_comparison_exp |> Encode.optional input.created_at ), ( "id", encodeInt_comparison_exp |> Encode.optional input.id ), ( "name", encodeString_comparison_exp |> Encode.optional input.name ), ( "updated_at", encodeTimestamptz_comparison_exp |> Encode.optional input.updated_at ) ]
+        [ ( "_and", (encodeGame_bool_exp |> Encode.maybe |> Encode.list) |> Encode.optional input.and_ ), ( "_not", encodeGame_bool_exp |> Encode.optional input.not_ ), ( "_or", (encodeGame_bool_exp |> Encode.maybe |> Encode.list) |> Encode.optional input.or_ ), ( "active", encodeBoolean_comparison_exp |> Encode.optional input.active ), ( "created_at", encodeTimestamptz_comparison_exp |> Encode.optional input.created_at ), ( "id", encodeInt_comparison_exp |> Encode.optional input.id ), ( "name", encodeString_comparison_exp |> Encode.optional input.name ), ( "updated_at", encodeTimestamptz_comparison_exp |> Encode.optional input.updated_at ) ]
 
 
-buildGames_inc_input : (Games_inc_inputOptionalFields -> Games_inc_inputOptionalFields) -> Games_inc_input
-buildGames_inc_input fillOptionals =
+buildGame_inc_input : (Game_inc_inputOptionalFields -> Game_inc_inputOptionalFields) -> Game_inc_input
+buildGame_inc_input fillOptionals =
     let
         optionals =
             fillOptionals
@@ -250,26 +250,26 @@ buildGames_inc_input fillOptionals =
     { id = optionals.id }
 
 
-type alias Games_inc_inputOptionalFields =
+type alias Game_inc_inputOptionalFields =
     { id : OptionalArgument Int }
 
 
-{-| Type for the Games\_inc\_input input object.
+{-| Type for the Game\_inc\_input input object.
 -}
-type alias Games_inc_input =
+type alias Game_inc_input =
     { id : OptionalArgument Int }
 
 
-{-| Encode a Games\_inc\_input into a value that can be used as an argument.
+{-| Encode a Game\_inc\_input into a value that can be used as an argument.
 -}
-encodeGames_inc_input : Games_inc_input -> Value
-encodeGames_inc_input input =
+encodeGame_inc_input : Game_inc_input -> Value
+encodeGame_inc_input input =
     Encode.maybeObject
         [ ( "id", Encode.int |> Encode.optional input.id ) ]
 
 
-buildGames_insert_input : (Games_insert_inputOptionalFields -> Games_insert_inputOptionalFields) -> Games_insert_input
-buildGames_insert_input fillOptionals =
+buildGame_insert_input : (Game_insert_inputOptionalFields -> Game_insert_inputOptionalFields) -> Game_insert_input
+buildGame_insert_input fillOptionals =
     let
         optionals =
             fillOptionals
@@ -278,7 +278,7 @@ buildGames_insert_input fillOptionals =
     { active = optionals.active, created_at = optionals.created_at, id = optionals.id, name = optionals.name, updated_at = optionals.updated_at }
 
 
-type alias Games_insert_inputOptionalFields =
+type alias Game_insert_inputOptionalFields =
     { active : OptionalArgument Bool
     , created_at : OptionalArgument Api.ScalarCodecs.Timestamptz
     , id : OptionalArgument Int
@@ -287,9 +287,9 @@ type alias Games_insert_inputOptionalFields =
     }
 
 
-{-| Type for the Games\_insert\_input input object.
+{-| Type for the Game\_insert\_input input object.
 -}
-type alias Games_insert_input =
+type alias Game_insert_input =
     { active : OptionalArgument Bool
     , created_at : OptionalArgument Api.ScalarCodecs.Timestamptz
     , id : OptionalArgument Int
@@ -298,16 +298,16 @@ type alias Games_insert_input =
     }
 
 
-{-| Encode a Games\_insert\_input into a value that can be used as an argument.
+{-| Encode a Game\_insert\_input into a value that can be used as an argument.
 -}
-encodeGames_insert_input : Games_insert_input -> Value
-encodeGames_insert_input input =
+encodeGame_insert_input : Game_insert_input -> Value
+encodeGame_insert_input input =
     Encode.maybeObject
         [ ( "active", Encode.bool |> Encode.optional input.active ), ( "created_at", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.created_at ), ( "id", Encode.int |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "updated_at", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.updated_at ) ]
 
 
-buildGames_max_order_by : (Games_max_order_byOptionalFields -> Games_max_order_byOptionalFields) -> Games_max_order_by
-buildGames_max_order_by fillOptionals =
+buildGame_max_order_by : (Game_max_order_byOptionalFields -> Game_max_order_byOptionalFields) -> Game_max_order_by
+buildGame_max_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -316,7 +316,7 @@ buildGames_max_order_by fillOptionals =
     { created_at = optionals.created_at, id = optionals.id, name = optionals.name, updated_at = optionals.updated_at }
 
 
-type alias Games_max_order_byOptionalFields =
+type alias Game_max_order_byOptionalFields =
     { created_at : OptionalArgument Api.Enum.Order_by.Order_by
     , id : OptionalArgument Api.Enum.Order_by.Order_by
     , name : OptionalArgument Api.Enum.Order_by.Order_by
@@ -324,9 +324,9 @@ type alias Games_max_order_byOptionalFields =
     }
 
 
-{-| Type for the Games\_max\_order\_by input object.
+{-| Type for the Game\_max\_order\_by input object.
 -}
-type alias Games_max_order_by =
+type alias Game_max_order_by =
     { created_at : OptionalArgument Api.Enum.Order_by.Order_by
     , id : OptionalArgument Api.Enum.Order_by.Order_by
     , name : OptionalArgument Api.Enum.Order_by.Order_by
@@ -334,16 +334,16 @@ type alias Games_max_order_by =
     }
 
 
-{-| Encode a Games\_max\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_max\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_max_order_by : Games_max_order_by -> Value
-encodeGames_max_order_by input =
+encodeGame_max_order_by : Game_max_order_by -> Value
+encodeGame_max_order_by input =
     Encode.maybeObject
         [ ( "created_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.created_at ), ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.name ), ( "updated_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.updated_at ) ]
 
 
-buildGames_min_order_by : (Games_min_order_byOptionalFields -> Games_min_order_byOptionalFields) -> Games_min_order_by
-buildGames_min_order_by fillOptionals =
+buildGame_min_order_by : (Game_min_order_byOptionalFields -> Game_min_order_byOptionalFields) -> Game_min_order_by
+buildGame_min_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -352,7 +352,7 @@ buildGames_min_order_by fillOptionals =
     { created_at = optionals.created_at, id = optionals.id, name = optionals.name, updated_at = optionals.updated_at }
 
 
-type alias Games_min_order_byOptionalFields =
+type alias Game_min_order_byOptionalFields =
     { created_at : OptionalArgument Api.Enum.Order_by.Order_by
     , id : OptionalArgument Api.Enum.Order_by.Order_by
     , name : OptionalArgument Api.Enum.Order_by.Order_by
@@ -360,9 +360,9 @@ type alias Games_min_order_byOptionalFields =
     }
 
 
-{-| Type for the Games\_min\_order\_by input object.
+{-| Type for the Game\_min\_order\_by input object.
 -}
-type alias Games_min_order_by =
+type alias Game_min_order_by =
     { created_at : OptionalArgument Api.Enum.Order_by.Order_by
     , id : OptionalArgument Api.Enum.Order_by.Order_by
     , name : OptionalArgument Api.Enum.Order_by.Order_by
@@ -370,105 +370,105 @@ type alias Games_min_order_by =
     }
 
 
-{-| Encode a Games\_min\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_min\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_min_order_by : Games_min_order_by -> Value
-encodeGames_min_order_by input =
+encodeGame_min_order_by : Game_min_order_by -> Value
+encodeGame_min_order_by input =
     Encode.maybeObject
         [ ( "created_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.created_at ), ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.name ), ( "updated_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.updated_at ) ]
 
 
-buildGames_obj_rel_insert_input : Games_obj_rel_insert_inputRequiredFields -> (Games_obj_rel_insert_inputOptionalFields -> Games_obj_rel_insert_inputOptionalFields) -> Games_obj_rel_insert_input
-buildGames_obj_rel_insert_input required fillOptionals =
+buildGame_obj_rel_insert_input : Game_obj_rel_insert_inputRequiredFields -> (Game_obj_rel_insert_inputOptionalFields -> Game_obj_rel_insert_inputOptionalFields) -> Game_obj_rel_insert_input
+buildGame_obj_rel_insert_input required fillOptionals =
     let
         optionals =
             fillOptionals
                 { on_conflict = Absent }
     in
-    Games_obj_rel_insert_input { data = required.data, on_conflict = optionals.on_conflict }
+    Game_obj_rel_insert_input { data = required.data, on_conflict = optionals.on_conflict }
 
 
-type alias Games_obj_rel_insert_inputRequiredFields =
-    { data : Games_insert_input }
+type alias Game_obj_rel_insert_inputRequiredFields =
+    { data : Game_insert_input }
 
 
-type alias Games_obj_rel_insert_inputOptionalFields =
-    { on_conflict : OptionalArgument Games_on_conflict }
+type alias Game_obj_rel_insert_inputOptionalFields =
+    { on_conflict : OptionalArgument Game_on_conflict }
 
 
-{-| Type alias for the `Games_obj_rel_insert_input` attributes. Note that this type
-needs to use the `Games_obj_rel_insert_input` type (not just a plain type alias) because it has
+{-| Type alias for the `Game_obj_rel_insert_input` attributes. Note that this type
+needs to use the `Game_obj_rel_insert_input` type (not just a plain type alias) because it has
 references to itself either directly (recursive) or indirectly (circular). See
 <https://github.com/dillonkearns/elm-graphql/issues/33>.
 -}
-type alias Games_obj_rel_insert_inputRaw =
-    { data : Games_insert_input
-    , on_conflict : OptionalArgument Games_on_conflict
+type alias Game_obj_rel_insert_inputRaw =
+    { data : Game_insert_input
+    , on_conflict : OptionalArgument Game_on_conflict
     }
 
 
-{-| Type for the Games\_obj\_rel\_insert\_input input object.
+{-| Type for the Game\_obj\_rel\_insert\_input input object.
 -}
-type Games_obj_rel_insert_input
-    = Games_obj_rel_insert_input Games_obj_rel_insert_inputRaw
+type Game_obj_rel_insert_input
+    = Game_obj_rel_insert_input Game_obj_rel_insert_inputRaw
 
 
-{-| Encode a Games\_obj\_rel\_insert\_input into a value that can be used as an argument.
+{-| Encode a Game\_obj\_rel\_insert\_input into a value that can be used as an argument.
 -}
-encodeGames_obj_rel_insert_input : Games_obj_rel_insert_input -> Value
-encodeGames_obj_rel_insert_input (Games_obj_rel_insert_input input) =
+encodeGame_obj_rel_insert_input : Game_obj_rel_insert_input -> Value
+encodeGame_obj_rel_insert_input (Game_obj_rel_insert_input input) =
     Encode.maybeObject
-        [ ( "data", encodeGames_insert_input input.data |> Just ), ( "on_conflict", encodeGames_on_conflict |> Encode.optional input.on_conflict ) ]
+        [ ( "data", encodeGame_insert_input input.data |> Just ), ( "on_conflict", encodeGame_on_conflict |> Encode.optional input.on_conflict ) ]
 
 
-buildGames_on_conflict : Games_on_conflictRequiredFields -> (Games_on_conflictOptionalFields -> Games_on_conflictOptionalFields) -> Games_on_conflict
-buildGames_on_conflict required fillOptionals =
+buildGame_on_conflict : Game_on_conflictRequiredFields -> (Game_on_conflictOptionalFields -> Game_on_conflictOptionalFields) -> Game_on_conflict
+buildGame_on_conflict required fillOptionals =
     let
         optionals =
             fillOptionals
                 { where_ = Absent }
     in
-    Games_on_conflict { constraint = required.constraint, update_columns = required.update_columns, where_ = optionals.where_ }
+    Game_on_conflict { constraint = required.constraint, update_columns = required.update_columns, where_ = optionals.where_ }
 
 
-type alias Games_on_conflictRequiredFields =
-    { constraint : Api.Enum.Games_constraint.Games_constraint
-    , update_columns : List Api.Enum.Games_update_column.Games_update_column
+type alias Game_on_conflictRequiredFields =
+    { constraint : Api.Enum.Game_constraint.Game_constraint
+    , update_columns : List Api.Enum.Game_update_column.Game_update_column
     }
 
 
-type alias Games_on_conflictOptionalFields =
-    { where_ : OptionalArgument Games_bool_exp }
+type alias Game_on_conflictOptionalFields =
+    { where_ : OptionalArgument Game_bool_exp }
 
 
-{-| Type alias for the `Games_on_conflict` attributes. Note that this type
-needs to use the `Games_on_conflict` type (not just a plain type alias) because it has
+{-| Type alias for the `Game_on_conflict` attributes. Note that this type
+needs to use the `Game_on_conflict` type (not just a plain type alias) because it has
 references to itself either directly (recursive) or indirectly (circular). See
 <https://github.com/dillonkearns/elm-graphql/issues/33>.
 -}
-type alias Games_on_conflictRaw =
-    { constraint : Api.Enum.Games_constraint.Games_constraint
-    , update_columns : List Api.Enum.Games_update_column.Games_update_column
-    , where_ : OptionalArgument Games_bool_exp
+type alias Game_on_conflictRaw =
+    { constraint : Api.Enum.Game_constraint.Game_constraint
+    , update_columns : List Api.Enum.Game_update_column.Game_update_column
+    , where_ : OptionalArgument Game_bool_exp
     }
 
 
-{-| Type for the Games\_on\_conflict input object.
+{-| Type for the Game\_on\_conflict input object.
 -}
-type Games_on_conflict
-    = Games_on_conflict Games_on_conflictRaw
+type Game_on_conflict
+    = Game_on_conflict Game_on_conflictRaw
 
 
-{-| Encode a Games\_on\_conflict into a value that can be used as an argument.
+{-| Encode a Game\_on\_conflict into a value that can be used as an argument.
 -}
-encodeGames_on_conflict : Games_on_conflict -> Value
-encodeGames_on_conflict (Games_on_conflict input) =
+encodeGame_on_conflict : Game_on_conflict -> Value
+encodeGame_on_conflict (Game_on_conflict input) =
     Encode.maybeObject
-        [ ( "constraint", Encode.enum Api.Enum.Games_constraint.toString input.constraint |> Just ), ( "update_columns", (Encode.enum Api.Enum.Games_update_column.toString |> Encode.list) input.update_columns |> Just ), ( "where", encodeGames_bool_exp |> Encode.optional input.where_ ) ]
+        [ ( "constraint", Encode.enum Api.Enum.Game_constraint.toString input.constraint |> Just ), ( "update_columns", (Encode.enum Api.Enum.Game_update_column.toString |> Encode.list) input.update_columns |> Just ), ( "where", encodeGame_bool_exp |> Encode.optional input.where_ ) ]
 
 
-buildGames_order_by : (Games_order_byOptionalFields -> Games_order_byOptionalFields) -> Games_order_by
-buildGames_order_by fillOptionals =
+buildGame_order_by : (Game_order_byOptionalFields -> Game_order_byOptionalFields) -> Game_order_by
+buildGame_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -477,7 +477,7 @@ buildGames_order_by fillOptionals =
     { active = optionals.active, created_at = optionals.created_at, id = optionals.id, name = optionals.name, updated_at = optionals.updated_at }
 
 
-type alias Games_order_byOptionalFields =
+type alias Game_order_byOptionalFields =
     { active : OptionalArgument Api.Enum.Order_by.Order_by
     , created_at : OptionalArgument Api.Enum.Order_by.Order_by
     , id : OptionalArgument Api.Enum.Order_by.Order_by
@@ -486,9 +486,9 @@ type alias Games_order_byOptionalFields =
     }
 
 
-{-| Type for the Games\_order\_by input object.
+{-| Type for the Game\_order\_by input object.
 -}
-type alias Games_order_by =
+type alias Game_order_by =
     { active : OptionalArgument Api.Enum.Order_by.Order_by
     , created_at : OptionalArgument Api.Enum.Order_by.Order_by
     , id : OptionalArgument Api.Enum.Order_by.Order_by
@@ -497,16 +497,16 @@ type alias Games_order_by =
     }
 
 
-{-| Encode a Games\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_order_by : Games_order_by -> Value
-encodeGames_order_by input =
+encodeGame_order_by : Game_order_by -> Value
+encodeGame_order_by input =
     Encode.maybeObject
         [ ( "active", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.active ), ( "created_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.created_at ), ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.name ), ( "updated_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.updated_at ) ]
 
 
-buildGames_set_input : (Games_set_inputOptionalFields -> Games_set_inputOptionalFields) -> Games_set_input
-buildGames_set_input fillOptionals =
+buildGame_set_input : (Game_set_inputOptionalFields -> Game_set_inputOptionalFields) -> Game_set_input
+buildGame_set_input fillOptionals =
     let
         optionals =
             fillOptionals
@@ -515,7 +515,7 @@ buildGames_set_input fillOptionals =
     { active = optionals.active, created_at = optionals.created_at, id = optionals.id, name = optionals.name, updated_at = optionals.updated_at }
 
 
-type alias Games_set_inputOptionalFields =
+type alias Game_set_inputOptionalFields =
     { active : OptionalArgument Bool
     , created_at : OptionalArgument Api.ScalarCodecs.Timestamptz
     , id : OptionalArgument Int
@@ -524,9 +524,9 @@ type alias Games_set_inputOptionalFields =
     }
 
 
-{-| Type for the Games\_set\_input input object.
+{-| Type for the Game\_set\_input input object.
 -}
-type alias Games_set_input =
+type alias Game_set_input =
     { active : OptionalArgument Bool
     , created_at : OptionalArgument Api.ScalarCodecs.Timestamptz
     , id : OptionalArgument Int
@@ -535,16 +535,16 @@ type alias Games_set_input =
     }
 
 
-{-| Encode a Games\_set\_input into a value that can be used as an argument.
+{-| Encode a Game\_set\_input into a value that can be used as an argument.
 -}
-encodeGames_set_input : Games_set_input -> Value
-encodeGames_set_input input =
+encodeGame_set_input : Game_set_input -> Value
+encodeGame_set_input input =
     Encode.maybeObject
         [ ( "active", Encode.bool |> Encode.optional input.active ), ( "created_at", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.created_at ), ( "id", Encode.int |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "updated_at", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.updated_at ) ]
 
 
-buildGames_stddev_order_by : (Games_stddev_order_byOptionalFields -> Games_stddev_order_byOptionalFields) -> Games_stddev_order_by
-buildGames_stddev_order_by fillOptionals =
+buildGame_stddev_order_by : (Game_stddev_order_byOptionalFields -> Game_stddev_order_byOptionalFields) -> Game_stddev_order_by
+buildGame_stddev_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -553,26 +553,26 @@ buildGames_stddev_order_by fillOptionals =
     { id = optionals.id }
 
 
-type alias Games_stddev_order_byOptionalFields =
+type alias Game_stddev_order_byOptionalFields =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Type for the Games\_stddev\_order\_by input object.
+{-| Type for the Game\_stddev\_order\_by input object.
 -}
-type alias Games_stddev_order_by =
+type alias Game_stddev_order_by =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Encode a Games\_stddev\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_stddev\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_stddev_order_by : Games_stddev_order_by -> Value
-encodeGames_stddev_order_by input =
+encodeGame_stddev_order_by : Game_stddev_order_by -> Value
+encodeGame_stddev_order_by input =
     Encode.maybeObject
         [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
-buildGames_stddev_pop_order_by : (Games_stddev_pop_order_byOptionalFields -> Games_stddev_pop_order_byOptionalFields) -> Games_stddev_pop_order_by
-buildGames_stddev_pop_order_by fillOptionals =
+buildGame_stddev_pop_order_by : (Game_stddev_pop_order_byOptionalFields -> Game_stddev_pop_order_byOptionalFields) -> Game_stddev_pop_order_by
+buildGame_stddev_pop_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -581,26 +581,26 @@ buildGames_stddev_pop_order_by fillOptionals =
     { id = optionals.id }
 
 
-type alias Games_stddev_pop_order_byOptionalFields =
+type alias Game_stddev_pop_order_byOptionalFields =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Type for the Games\_stddev\_pop\_order\_by input object.
+{-| Type for the Game\_stddev\_pop\_order\_by input object.
 -}
-type alias Games_stddev_pop_order_by =
+type alias Game_stddev_pop_order_by =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Encode a Games\_stddev\_pop\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_stddev\_pop\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_stddev_pop_order_by : Games_stddev_pop_order_by -> Value
-encodeGames_stddev_pop_order_by input =
+encodeGame_stddev_pop_order_by : Game_stddev_pop_order_by -> Value
+encodeGame_stddev_pop_order_by input =
     Encode.maybeObject
         [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
-buildGames_stddev_samp_order_by : (Games_stddev_samp_order_byOptionalFields -> Games_stddev_samp_order_byOptionalFields) -> Games_stddev_samp_order_by
-buildGames_stddev_samp_order_by fillOptionals =
+buildGame_stddev_samp_order_by : (Game_stddev_samp_order_byOptionalFields -> Game_stddev_samp_order_byOptionalFields) -> Game_stddev_samp_order_by
+buildGame_stddev_samp_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -609,26 +609,26 @@ buildGames_stddev_samp_order_by fillOptionals =
     { id = optionals.id }
 
 
-type alias Games_stddev_samp_order_byOptionalFields =
+type alias Game_stddev_samp_order_byOptionalFields =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Type for the Games\_stddev\_samp\_order\_by input object.
+{-| Type for the Game\_stddev\_samp\_order\_by input object.
 -}
-type alias Games_stddev_samp_order_by =
+type alias Game_stddev_samp_order_by =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Encode a Games\_stddev\_samp\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_stddev\_samp\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_stddev_samp_order_by : Games_stddev_samp_order_by -> Value
-encodeGames_stddev_samp_order_by input =
+encodeGame_stddev_samp_order_by : Game_stddev_samp_order_by -> Value
+encodeGame_stddev_samp_order_by input =
     Encode.maybeObject
         [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
-buildGames_sum_order_by : (Games_sum_order_byOptionalFields -> Games_sum_order_byOptionalFields) -> Games_sum_order_by
-buildGames_sum_order_by fillOptionals =
+buildGame_sum_order_by : (Game_sum_order_byOptionalFields -> Game_sum_order_byOptionalFields) -> Game_sum_order_by
+buildGame_sum_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -637,26 +637,26 @@ buildGames_sum_order_by fillOptionals =
     { id = optionals.id }
 
 
-type alias Games_sum_order_byOptionalFields =
+type alias Game_sum_order_byOptionalFields =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Type for the Games\_sum\_order\_by input object.
+{-| Type for the Game\_sum\_order\_by input object.
 -}
-type alias Games_sum_order_by =
+type alias Game_sum_order_by =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Encode a Games\_sum\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_sum\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_sum_order_by : Games_sum_order_by -> Value
-encodeGames_sum_order_by input =
+encodeGame_sum_order_by : Game_sum_order_by -> Value
+encodeGame_sum_order_by input =
     Encode.maybeObject
         [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
-buildGames_var_pop_order_by : (Games_var_pop_order_byOptionalFields -> Games_var_pop_order_byOptionalFields) -> Games_var_pop_order_by
-buildGames_var_pop_order_by fillOptionals =
+buildGame_var_pop_order_by : (Game_var_pop_order_byOptionalFields -> Game_var_pop_order_byOptionalFields) -> Game_var_pop_order_by
+buildGame_var_pop_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -665,26 +665,26 @@ buildGames_var_pop_order_by fillOptionals =
     { id = optionals.id }
 
 
-type alias Games_var_pop_order_byOptionalFields =
+type alias Game_var_pop_order_byOptionalFields =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Type for the Games\_var\_pop\_order\_by input object.
+{-| Type for the Game\_var\_pop\_order\_by input object.
 -}
-type alias Games_var_pop_order_by =
+type alias Game_var_pop_order_by =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Encode a Games\_var\_pop\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_var\_pop\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_var_pop_order_by : Games_var_pop_order_by -> Value
-encodeGames_var_pop_order_by input =
+encodeGame_var_pop_order_by : Game_var_pop_order_by -> Value
+encodeGame_var_pop_order_by input =
     Encode.maybeObject
         [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
-buildGames_var_samp_order_by : (Games_var_samp_order_byOptionalFields -> Games_var_samp_order_byOptionalFields) -> Games_var_samp_order_by
-buildGames_var_samp_order_by fillOptionals =
+buildGame_var_samp_order_by : (Game_var_samp_order_byOptionalFields -> Game_var_samp_order_byOptionalFields) -> Game_var_samp_order_by
+buildGame_var_samp_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -693,26 +693,26 @@ buildGames_var_samp_order_by fillOptionals =
     { id = optionals.id }
 
 
-type alias Games_var_samp_order_byOptionalFields =
+type alias Game_var_samp_order_byOptionalFields =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Type for the Games\_var\_samp\_order\_by input object.
+{-| Type for the Game\_var\_samp\_order\_by input object.
 -}
-type alias Games_var_samp_order_by =
+type alias Game_var_samp_order_by =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Encode a Games\_var\_samp\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_var\_samp\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_var_samp_order_by : Games_var_samp_order_by -> Value
-encodeGames_var_samp_order_by input =
+encodeGame_var_samp_order_by : Game_var_samp_order_by -> Value
+encodeGame_var_samp_order_by input =
     Encode.maybeObject
         [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
-buildGames_variance_order_by : (Games_variance_order_byOptionalFields -> Games_variance_order_byOptionalFields) -> Games_variance_order_by
-buildGames_variance_order_by fillOptionals =
+buildGame_variance_order_by : (Game_variance_order_byOptionalFields -> Game_variance_order_byOptionalFields) -> Game_variance_order_by
+buildGame_variance_order_by fillOptionals =
     let
         optionals =
             fillOptionals
@@ -721,20 +721,20 @@ buildGames_variance_order_by fillOptionals =
     { id = optionals.id }
 
 
-type alias Games_variance_order_byOptionalFields =
+type alias Game_variance_order_byOptionalFields =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Type for the Games\_variance\_order\_by input object.
+{-| Type for the Game\_variance\_order\_by input object.
 -}
-type alias Games_variance_order_by =
+type alias Game_variance_order_by =
     { id : OptionalArgument Api.Enum.Order_by.Order_by }
 
 
-{-| Encode a Games\_variance\_order\_by into a value that can be used as an argument.
+{-| Encode a Game\_variance\_order\_by into a value that can be used as an argument.
 -}
-encodeGames_variance_order_by : Games_variance_order_by -> Value
-encodeGames_variance_order_by input =
+encodeGame_variance_order_by : Game_variance_order_by -> Value
+encodeGame_variance_order_by input =
     Encode.maybeObject
         [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
 

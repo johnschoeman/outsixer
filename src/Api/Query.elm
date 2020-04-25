@@ -4,7 +4,7 @@
 
 module Api.Query exposing (..)
 
-import Api.Enum.Games_select_column
+import Api.Enum.Game_select_column
 import Api.InputObject
 import Api.Interface
 import Api.Object
@@ -20,16 +20,16 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode exposing (Decoder)
 
 
-type alias GamesOptionalArguments =
-    { distinct_on : OptionalArgument (List Api.Enum.Games_select_column.Games_select_column)
+type alias GameOptionalArguments =
+    { distinct_on : OptionalArgument (List Api.Enum.Game_select_column.Game_select_column)
     , limit : OptionalArgument Int
     , offset : OptionalArgument Int
-    , order_by : OptionalArgument (List Api.InputObject.Games_order_by)
-    , where_ : OptionalArgument Api.InputObject.Games_bool_exp
+    , order_by : OptionalArgument (List Api.InputObject.Game_order_by)
+    , where_ : OptionalArgument Api.InputObject.Game_bool_exp
     }
 
 
-{-| fetch data from the table: "games"
+{-| fetch data from the table: "game"
 
   - distinct\_on - distinct select on columns
   - limit - limit the number of rows returned
@@ -38,29 +38,29 @@ type alias GamesOptionalArguments =
   - where\_ - filter the rows returned
 
 -}
-games : (GamesOptionalArguments -> GamesOptionalArguments) -> SelectionSet decodesTo Api.Object.Games -> SelectionSet (List decodesTo) RootQuery
-games fillInOptionals object_ =
+game : (GameOptionalArguments -> GameOptionalArguments) -> SelectionSet decodesTo Api.Object.Game -> SelectionSet (List decodesTo) RootQuery
+game fillInOptionals object_ =
     let
         filledInOptionals =
             fillInOptionals { distinct_on = Absent, limit = Absent, offset = Absent, order_by = Absent, where_ = Absent }
 
         optionalArgs =
-            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Api.Enum.Games_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Api.InputObject.encodeGames_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Api.InputObject.encodeGames_bool_exp ]
+            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Api.Enum.Game_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Api.InputObject.encodeGame_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Api.InputObject.encodeGame_bool_exp ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "games" optionalArgs object_ (identity >> Decode.list)
+    Object.selectionForCompositeField "game" optionalArgs object_ (identity >> Decode.list)
 
 
-type alias GamesAggregateOptionalArguments =
-    { distinct_on : OptionalArgument (List Api.Enum.Games_select_column.Games_select_column)
+type alias GameAggregateOptionalArguments =
+    { distinct_on : OptionalArgument (List Api.Enum.Game_select_column.Game_select_column)
     , limit : OptionalArgument Int
     , offset : OptionalArgument Int
-    , order_by : OptionalArgument (List Api.InputObject.Games_order_by)
-    , where_ : OptionalArgument Api.InputObject.Games_bool_exp
+    , order_by : OptionalArgument (List Api.InputObject.Game_order_by)
+    , where_ : OptionalArgument Api.InputObject.Game_bool_exp
     }
 
 
-{-| fetch aggregated fields from the table: "games"
+{-| fetch aggregated fields from the table: "game"
 
   - distinct\_on - distinct select on columns
   - limit - limit the number of rows returned
@@ -69,25 +69,25 @@ type alias GamesAggregateOptionalArguments =
   - where\_ - filter the rows returned
 
 -}
-games_aggregate : (GamesAggregateOptionalArguments -> GamesAggregateOptionalArguments) -> SelectionSet decodesTo Api.Object.Games_aggregate -> SelectionSet decodesTo RootQuery
-games_aggregate fillInOptionals object_ =
+game_aggregate : (GameAggregateOptionalArguments -> GameAggregateOptionalArguments) -> SelectionSet decodesTo Api.Object.Game_aggregate -> SelectionSet decodesTo RootQuery
+game_aggregate fillInOptionals object_ =
     let
         filledInOptionals =
             fillInOptionals { distinct_on = Absent, limit = Absent, offset = Absent, order_by = Absent, where_ = Absent }
 
         optionalArgs =
-            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Api.Enum.Games_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Api.InputObject.encodeGames_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Api.InputObject.encodeGames_bool_exp ]
+            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Api.Enum.Game_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Api.InputObject.encodeGame_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Api.InputObject.encodeGame_bool_exp ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "games_aggregate" optionalArgs object_ identity
+    Object.selectionForCompositeField "game_aggregate" optionalArgs object_ identity
 
 
-type alias GamesByPkRequiredArguments =
+type alias GameByPkRequiredArguments =
     { id : Int }
 
 
-{-| fetch data from the table: "games" using primary key columns
+{-| fetch data from the table: "game" using primary key columns
 -}
-games_by_pk : GamesByPkRequiredArguments -> SelectionSet decodesTo Api.Object.Games -> SelectionSet (Maybe decodesTo) RootQuery
-games_by_pk requiredArgs object_ =
-    Object.selectionForCompositeField "games_by_pk" [ Argument.required "id" requiredArgs.id Encode.int ] object_ (identity >> Decode.nullable)
+game_by_pk : GameByPkRequiredArguments -> SelectionSet decodesTo Api.Object.Game -> SelectionSet (Maybe decodesTo) RootQuery
+game_by_pk requiredArgs object_ =
+    Object.selectionForCompositeField "game_by_pk" [ Argument.required "id" requiredArgs.id Encode.int ] object_ (identity >> Decode.nullable)

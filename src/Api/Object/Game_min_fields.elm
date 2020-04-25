@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Object.Games_max_fields exposing (..)
+module Api.Object.Game_min_fields exposing (..)
 
 import Api.InputObject
 import Api.Interface
@@ -19,21 +19,21 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
-created_at : SelectionSet (Maybe Api.ScalarCodecs.Timestamptz) Api.Object.Games_max_fields
+created_at : SelectionSet (Maybe Api.ScalarCodecs.Timestamptz) Api.Object.Game_min_fields
 created_at =
     Object.selectionForField "(Maybe ScalarCodecs.Timestamptz)" "created_at" [] (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapCodecs |> .codecTimestamptz |> .decoder |> Decode.nullable)
 
 
-id : SelectionSet (Maybe Int) Api.Object.Games_max_fields
+id : SelectionSet (Maybe Int) Api.Object.Game_min_fields
 id =
     Object.selectionForField "(Maybe Int)" "id" [] (Decode.int |> Decode.nullable)
 
 
-name : SelectionSet (Maybe String) Api.Object.Games_max_fields
+name : SelectionSet (Maybe String) Api.Object.Game_min_fields
 name =
     Object.selectionForField "(Maybe String)" "name" [] (Decode.string |> Decode.nullable)
 
 
-updated_at : SelectionSet (Maybe Api.ScalarCodecs.Timestamptz) Api.Object.Games_max_fields
+updated_at : SelectionSet (Maybe Api.ScalarCodecs.Timestamptz) Api.Object.Game_min_fields
 updated_at =
     Object.selectionForField "(Maybe ScalarCodecs.Timestamptz)" "updated_at" [] (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapCodecs |> .codecTimestamptz |> .decoder |> Decode.nullable)

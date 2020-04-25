@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Object.Games_sum_fields exposing (..)
+module Api.Object.Game_sum_fields exposing (..)
 
 import Api.InputObject
 import Api.Interface
@@ -19,6 +19,6 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
-id : SelectionSet (Maybe Int) Api.Object.Games_sum_fields
+id : SelectionSet (Maybe Int) Api.Object.Game_sum_fields
 id =
     Object.selectionForField "(Maybe Int)" "id" [] (Decode.int |> Decode.nullable)

@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Object.Games exposing (..)
+module Api.Object.Game exposing (..)
 
 import Api.InputObject
 import Api.Interface
@@ -19,26 +19,26 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
-active : SelectionSet Bool Api.Object.Games
+active : SelectionSet Bool Api.Object.Game
 active =
     Object.selectionForField "Bool" "active" [] Decode.bool
 
 
-created_at : SelectionSet Api.ScalarCodecs.Timestamptz Api.Object.Games
+created_at : SelectionSet Api.ScalarCodecs.Timestamptz Api.Object.Game
 created_at =
     Object.selectionForField "ScalarCodecs.Timestamptz" "created_at" [] (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapCodecs |> .codecTimestamptz |> .decoder)
 
 
-id : SelectionSet Int Api.Object.Games
+id : SelectionSet Int Api.Object.Game
 id =
     Object.selectionForField "Int" "id" [] Decode.int
 
 
-name : SelectionSet String Api.Object.Games
+name : SelectionSet String Api.Object.Game
 name =
     Object.selectionForField "String" "name" [] Decode.string
 
 
-updated_at : SelectionSet Api.ScalarCodecs.Timestamptz Api.Object.Games
+updated_at : SelectionSet Api.ScalarCodecs.Timestamptz Api.Object.Game
 updated_at =
     Object.selectionForField "ScalarCodecs.Timestamptz" "updated_at" [] (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapCodecs |> .codecTimestamptz |> .decoder)

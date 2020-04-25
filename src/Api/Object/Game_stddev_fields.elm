@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Object.Games_mutation_response exposing (..)
+module Api.Object.Game_stddev_fields exposing (..)
 
 import Api.InputObject
 import Api.Interface
@@ -19,15 +19,6 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
-{-| number of affected rows by the mutation
--}
-affected_rows : SelectionSet Int Api.Object.Games_mutation_response
-affected_rows =
-    Object.selectionForField "Int" "affected_rows" [] Decode.int
-
-
-{-| data of the affected rows by the mutation
--}
-returning : SelectionSet decodesTo Api.Object.Games -> SelectionSet (List decodesTo) Api.Object.Games_mutation_response
-returning object_ =
-    Object.selectionForCompositeField "returning" [] object_ (identity >> Decode.list)
+id : SelectionSet (Maybe Float) Api.Object.Game_stddev_fields
+id =
+    Object.selectionForField "(Maybe Float)" "id" [] (Decode.float |> Decode.nullable)

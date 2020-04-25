@@ -19,72 +19,72 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode exposing (Decoder)
 
 
-type alias DeleteGamesRequiredArguments =
-    { where_ : Api.InputObject.Games_bool_exp }
+type alias DeleteGameRequiredArguments =
+    { where_ : Api.InputObject.Game_bool_exp }
 
 
-{-| delete data from the table: "games"
+{-| delete data from the table: "game"
 
   - where\_ - filter the rows which have to be deleted
 
 -}
-delete_games : DeleteGamesRequiredArguments -> SelectionSet decodesTo Api.Object.Games_mutation_response -> SelectionSet (Maybe decodesTo) RootMutation
-delete_games requiredArgs object_ =
-    Object.selectionForCompositeField "delete_games" [ Argument.required "where" requiredArgs.where_ Api.InputObject.encodeGames_bool_exp ] object_ (identity >> Decode.nullable)
+delete_game : DeleteGameRequiredArguments -> SelectionSet decodesTo Api.Object.Game_mutation_response -> SelectionSet (Maybe decodesTo) RootMutation
+delete_game requiredArgs object_ =
+    Object.selectionForCompositeField "delete_game" [ Argument.required "where" requiredArgs.where_ Api.InputObject.encodeGame_bool_exp ] object_ (identity >> Decode.nullable)
 
 
-type alias InsertGamesOptionalArguments =
-    { on_conflict : OptionalArgument Api.InputObject.Games_on_conflict }
+type alias InsertGameOptionalArguments =
+    { on_conflict : OptionalArgument Api.InputObject.Game_on_conflict }
 
 
-type alias InsertGamesRequiredArguments =
-    { objects : List Api.InputObject.Games_insert_input }
+type alias InsertGameRequiredArguments =
+    { objects : List Api.InputObject.Game_insert_input }
 
 
-{-| insert data into the table: "games"
+{-| insert data into the table: "game"
 
   - objects - the rows to be inserted
   - on\_conflict - on conflict condition
 
 -}
-insert_games : (InsertGamesOptionalArguments -> InsertGamesOptionalArguments) -> InsertGamesRequiredArguments -> SelectionSet decodesTo Api.Object.Games_mutation_response -> SelectionSet (Maybe decodesTo) RootMutation
-insert_games fillInOptionals requiredArgs object_ =
+insert_game : (InsertGameOptionalArguments -> InsertGameOptionalArguments) -> InsertGameRequiredArguments -> SelectionSet decodesTo Api.Object.Game_mutation_response -> SelectionSet (Maybe decodesTo) RootMutation
+insert_game fillInOptionals requiredArgs object_ =
     let
         filledInOptionals =
             fillInOptionals { on_conflict = Absent }
 
         optionalArgs =
-            [ Argument.optional "on_conflict" filledInOptionals.on_conflict Api.InputObject.encodeGames_on_conflict ]
+            [ Argument.optional "on_conflict" filledInOptionals.on_conflict Api.InputObject.encodeGame_on_conflict ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "insert_games" (optionalArgs ++ [ Argument.required "objects" requiredArgs.objects (Api.InputObject.encodeGames_insert_input |> Encode.list) ]) object_ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "insert_game" (optionalArgs ++ [ Argument.required "objects" requiredArgs.objects (Api.InputObject.encodeGame_insert_input |> Encode.list) ]) object_ (identity >> Decode.nullable)
 
 
-type alias UpdateGamesOptionalArguments =
-    { inc_ : OptionalArgument Api.InputObject.Games_inc_input
-    , set_ : OptionalArgument Api.InputObject.Games_set_input
+type alias UpdateGameOptionalArguments =
+    { inc_ : OptionalArgument Api.InputObject.Game_inc_input
+    , set_ : OptionalArgument Api.InputObject.Game_set_input
     }
 
 
-type alias UpdateGamesRequiredArguments =
-    { where_ : Api.InputObject.Games_bool_exp }
+type alias UpdateGameRequiredArguments =
+    { where_ : Api.InputObject.Game_bool_exp }
 
 
-{-| update data of the table: "games"
+{-| update data of the table: "game"
 
   - inc\_ - increments the integer columns with given value of the filtered values
   - set\_ - sets the columns of the filtered rows to the given values
   - where\_ - filter the rows which have to be updated
 
 -}
-update_games : (UpdateGamesOptionalArguments -> UpdateGamesOptionalArguments) -> UpdateGamesRequiredArguments -> SelectionSet decodesTo Api.Object.Games_mutation_response -> SelectionSet (Maybe decodesTo) RootMutation
-update_games fillInOptionals requiredArgs object_ =
+update_game : (UpdateGameOptionalArguments -> UpdateGameOptionalArguments) -> UpdateGameRequiredArguments -> SelectionSet decodesTo Api.Object.Game_mutation_response -> SelectionSet (Maybe decodesTo) RootMutation
+update_game fillInOptionals requiredArgs object_ =
     let
         filledInOptionals =
             fillInOptionals { inc_ = Absent, set_ = Absent }
 
         optionalArgs =
-            [ Argument.optional "_inc" filledInOptionals.inc_ Api.InputObject.encodeGames_inc_input, Argument.optional "_set" filledInOptionals.set_ Api.InputObject.encodeGames_set_input ]
+            [ Argument.optional "_inc" filledInOptionals.inc_ Api.InputObject.encodeGame_inc_input, Argument.optional "_set" filledInOptionals.set_ Api.InputObject.encodeGame_set_input ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "update_games" (optionalArgs ++ [ Argument.required "where" requiredArgs.where_ Api.InputObject.encodeGames_bool_exp ]) object_ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "update_game" (optionalArgs ++ [ Argument.required "where" requiredArgs.where_ Api.InputObject.encodeGame_bool_exp ]) object_ (identity >> Decode.nullable)

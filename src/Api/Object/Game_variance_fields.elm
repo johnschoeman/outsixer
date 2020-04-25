@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Object.Games_aggregate exposing (..)
+module Api.Object.Game_variance_fields exposing (..)
 
 import Api.InputObject
 import Api.Interface
@@ -19,11 +19,6 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
-aggregate : SelectionSet decodesTo Api.Object.Games_aggregate_fields -> SelectionSet (Maybe decodesTo) Api.Object.Games_aggregate
-aggregate object_ =
-    Object.selectionForCompositeField "aggregate" [] object_ (identity >> Decode.nullable)
-
-
-nodes : SelectionSet decodesTo Api.Object.Games -> SelectionSet (List decodesTo) Api.Object.Games_aggregate
-nodes object_ =
-    Object.selectionForCompositeField "nodes" [] object_ (identity >> Decode.list)
+id : SelectionSet (Maybe Float) Api.Object.Game_variance_fields
+id =
+    Object.selectionForField "(Maybe Float)" "id" [] (Decode.float |> Decode.nullable)

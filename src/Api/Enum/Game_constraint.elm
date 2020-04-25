@@ -2,26 +2,26 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Enum.Games_constraint exposing (..)
+module Api.Enum.Game_constraint exposing (..)
 
 import Json.Decode as Decode exposing (Decoder)
 
 
-{-| unique or primary key constraints on table "games"
+{-| unique or primary key constraints on table "game"
 
   - Games\_pkey - unique or primary key constraint
 
 -}
-type Games_constraint
+type Game_constraint
     = Games_pkey
 
 
-list : List Games_constraint
+list : List Game_constraint
 list =
     [ Games_pkey ]
 
 
-decoder : Decoder Games_constraint
+decoder : Decoder Game_constraint
 decoder =
     Decode.string
         |> Decode.andThen
@@ -31,13 +31,13 @@ decoder =
                         Decode.succeed Games_pkey
 
                     _ ->
-                        Decode.fail ("Invalid Games_constraint type, " ++ string ++ " try re-running the @dillonkearns/elm-graphql CLI ")
+                        Decode.fail ("Invalid Game_constraint type, " ++ string ++ " try re-running the @dillonkearns/elm-graphql CLI ")
             )
 
 
 {-| Convert from the union type representating the Enum to a string that the GraphQL server will recognize.
 -}
-toString : Games_constraint -> String
+toString : Game_constraint -> String
 toString enum =
     case enum of
         Games_pkey ->
@@ -55,7 +55,7 @@ This is the inverse of the Enum `toString` function. So you can call `toString` 
 This can be useful for generating Strings to use for <select> menus to check which item was selected.
 
 -}
-fromString : String -> Maybe Games_constraint
+fromString : String -> Maybe Game_constraint
 fromString enumString =
     case enumString of
         "games_pkey" ->

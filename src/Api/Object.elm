@@ -5,57 +5,57 @@
 module Api.Object exposing (..)
 
 
-type Games
-    = Games
+type Game
+    = Game
 
 
-type Games_aggregate
-    = Games_aggregate
+type Game_aggregate
+    = Game_aggregate
 
 
-type Games_aggregate_fields
-    = Games_aggregate_fields
+type Game_aggregate_fields
+    = Game_aggregate_fields
 
 
-type Games_avg_fields
-    = Games_avg_fields
+type Game_avg_fields
+    = Game_avg_fields
 
 
-type Games_max_fields
-    = Games_max_fields
+type Game_max_fields
+    = Game_max_fields
 
 
-type Games_min_fields
-    = Games_min_fields
+type Game_min_fields
+    = Game_min_fields
 
 
-type Games_mutation_response
-    = Games_mutation_response
+type Game_mutation_response
+    = Game_mutation_response
 
 
-type Games_stddev_fields
-    = Games_stddev_fields
+type Game_stddev_fields
+    = Game_stddev_fields
 
 
-type Games_stddev_pop_fields
-    = Games_stddev_pop_fields
+type Game_stddev_pop_fields
+    = Game_stddev_pop_fields
 
 
-type Games_stddev_samp_fields
-    = Games_stddev_samp_fields
+type Game_stddev_samp_fields
+    = Game_stddev_samp_fields
 
 
-type Games_sum_fields
-    = Games_sum_fields
+type Game_sum_fields
+    = Game_sum_fields
 
 
-type Games_var_pop_fields
-    = Games_var_pop_fields
+type Game_var_pop_fields
+    = Game_var_pop_fields
 
 
-type Games_var_samp_fields
-    = Games_var_samp_fields
+type Game_var_samp_fields
+    = Game_var_samp_fields
 
 
-type Games_variance_fields
-    = Games_variance_fields
+type Game_variance_fields
+    = Game_variance_fields
