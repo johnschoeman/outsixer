@@ -1,8 +1,10 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, text, div, h1, img)
+import Html exposing (Html, button, div, h1, img, text)
 import Html.Attributes exposing (src)
+import Html.Events exposing (onClick)
+
 
 
 ---- MODEL ----
@@ -22,12 +24,18 @@ init =
 
 
 type Msg
-    = NoOp
+    = CreateGame
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        CreateGame ->
+            ( model, Cmd.none )
+
+        NoOp ->
+            ( model, Cmd.none )
 
 
 
@@ -37,8 +45,8 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-    [
-        , h1 [] [ text "Outsixer" ]
+        [ h1 [] [ text "Outsixer" ]
+        , button [ onClick CreateGame ] [ text "CreateGame" ]
         ]
 
 
