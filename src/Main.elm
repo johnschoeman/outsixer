@@ -5,9 +5,9 @@ import Browser
 import Env exposing (Env)
 import Game exposing (Game)
 import Graphql.Http
-import Html exposing (Html, button, div, h1, img, text)
+import Html exposing (Html, button, div, h1, img, input, label, text)
 import Html.Attributes exposing (src)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import RemoteData exposing (RemoteData)
 
 
@@ -21,20 +21,33 @@ type Model
 
 type alias AppData =
     { games : GameData
-    , gameName : CreateGameData
+    , playerName : Maybe String
+    , gameName : Maybe String
     }
 
 
-type alias GameData =
-    RemoteData (Graphql.Http.Error (List Game)) (List Game)
+type alias GraphQLResponse data =
+    RemoteData (Graphql.Http.Error data) data
 
 
 type alias MutationResponse =
     { affected_rows : Int }
 
 
+type alias GameData =
+    GraphQLResponse (List Game)
+
+
 type alias CreateGameData =
-    RemoteData (Graphql.Http.Error (Maybe MutationResponse)) (Maybe MutationResponse)
+    GraphQLResponse (Maybe MutationResponse)
+
+
+type alias JoinGameData =
+    GraphQLResponse (Maybe MutationResponse)
+
+
+type alias StartGameData =
+    GraphQLResponse (Maybe MutationResponse)
 
 
 type alias Flags =
@@ -51,7 +64,8 @@ init { apiEndpoint, apiKey } =
     in
     ( MainApp
         { games = RemoteData.NotAsked
-        , gameName = RemoteData.NotAsked
+        , gameName = Nothing
+        , playerName = Nothing
         }
         env
     , API.fetchGames env ReceivedGames
@@ -63,22 +77,50 @@ init { apiEndpoint, apiKey } =
 
 
 type Msg
-    = CreateGame
+    = UpdatePlayerName String
+    | UpdateGameName String
     | ReceivedGames GameData
+    | CreateGame
     | ReceivedCreateGameResponse CreateGameData
+    | JoinGame
+    | ReceivedJoinGameResponse JoinGameData
+    | StartGame
+    | ReceivedStartGameResponse StartGameData
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( model, msg ) of
+        ( MainApp appData env, UpdatePlayerName playerName ) ->
+            ( MainApp { appData | playerName = Just playerName } env, Cmd.none )
+
+        ( MainApp appData env, UpdateGameName gameName ) ->
+            ( MainApp { appData | gameName = Just gameName } env, Cmd.none )
+
         ( MainApp appData env, ReceivedGames gameData ) ->
             ( MainApp { appData | games = gameData } env, Cmd.none )
 
         ( MainApp _ env, CreateGame ) ->
+            let
+                newGameName =
+                    "GAME"
+            in
             ( model, API.createGame env ReceivedCreateGameResponse )
 
         ( MainApp appData env, ReceivedCreateGameResponse createGameData ) ->
-            ( MainApp { appData | gameName = createGameData } env, Cmd.none )
+            ( MainApp appData env, Cmd.none )
+
+        ( _, JoinGame ) ->
+            ( model, Cmd.none )
+
+        ( _, ReceivedJoinGameResponse joinGameData ) ->
+            ( model, Cmd.none )
+
+        ( _, StartGame ) ->
+            ( model, Cmd.none )
+
+        ( _, ReceivedStartGameResponse startGameData ) ->
+            ( model, Cmd.none )
 
 
 
@@ -96,9 +138,53 @@ page model =
         MainApp appData _ ->
             div []
                 [ h1 [] [ text "Outsixer" ]
-                , button [ onClick CreateGame ] [ text "CreateGame" ]
+                , nameInput appData.playerName
+                , joinGame appData.gameName
+                , createNewGame
                 , listGames appData.games
                 ]
+
+
+nameInput : Maybe String -> Html Msg
+nameInput maybeName =
+    let
+        name =
+            case maybeName of
+                Just n ->
+                    n
+
+                Nothing ->
+                    ""
+    in
+    div []
+        [ label [] [ text "Player Name: " ]
+        , input [ onInput UpdatePlayerName ] [ text name ]
+        ]
+
+
+joinGame : Maybe String -> Html Msg
+joinGame maybeGameName =
+    let
+        gameName =
+            case maybeGameName of
+                Just n ->
+                    n
+
+                Nothing ->
+                    ""
+    in
+    div []
+        [ label [] [ text "Game Name: " ]
+        , input [ onInput UpdateGameName ] [ text gameName ]
+        , button [ onClick JoinGame ] [ text "Join Game" ]
+        ]
+
+
+createNewGame : Html Msg
+createNewGame =
+    div []
+        [ button [ onClick CreateGame ] [ text "CreateGame" ]
+        ]
 
 
 listGames : GameData -> Html msg
