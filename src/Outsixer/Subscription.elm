@@ -12,6 +12,7 @@ import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode exposing (Decoder)
 import Outsixer.Enum.Game_select_column
+import Outsixer.Enum.Player_select_column
 import Outsixer.InputObject
 import Outsixer.Interface
 import Outsixer.Object
@@ -91,3 +92,76 @@ type alias GameByPkRequiredArguments =
 game_by_pk : GameByPkRequiredArguments -> SelectionSet decodesTo Outsixer.Object.Game -> SelectionSet (Maybe decodesTo) RootSubscription
 game_by_pk requiredArgs object_ =
     Object.selectionForCompositeField "game_by_pk" [ Argument.required "id" requiredArgs.id Encode.int ] object_ (identity >> Decode.nullable)
+
+
+type alias PlayerOptionalArguments =
+    { distinct_on : OptionalArgument (List Outsixer.Enum.Player_select_column.Player_select_column)
+    , limit : OptionalArgument Int
+    , offset : OptionalArgument Int
+    , order_by : OptionalArgument (List Outsixer.InputObject.Player_order_by)
+    , where_ : OptionalArgument Outsixer.InputObject.Player_bool_exp
+    }
+
+
+{-| fetch data from the table: "player"
+
+  - distinct\_on - distinct select on columns
+  - limit - limit the number of rows returned
+  - offset - skip the first n rows. Use only with order\_by
+  - order\_by - sort the rows by one or more columns
+  - where\_ - filter the rows returned
+
+-}
+player : (PlayerOptionalArguments -> PlayerOptionalArguments) -> SelectionSet decodesTo Outsixer.Object.Player -> SelectionSet (List decodesTo) RootSubscription
+player fillInOptionals object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { distinct_on = Absent, limit = Absent, offset = Absent, order_by = Absent, where_ = Absent }
+
+        optionalArgs =
+            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Outsixer.Enum.Player_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Outsixer.InputObject.encodePlayer_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Outsixer.InputObject.encodePlayer_bool_exp ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "player" optionalArgs object_ (identity >> Decode.list)
+
+
+type alias PlayerAggregateOptionalArguments =
+    { distinct_on : OptionalArgument (List Outsixer.Enum.Player_select_column.Player_select_column)
+    , limit : OptionalArgument Int
+    , offset : OptionalArgument Int
+    , order_by : OptionalArgument (List Outsixer.InputObject.Player_order_by)
+    , where_ : OptionalArgument Outsixer.InputObject.Player_bool_exp
+    }
+
+
+{-| fetch aggregated fields from the table: "player"
+
+  - distinct\_on - distinct select on columns
+  - limit - limit the number of rows returned
+  - offset - skip the first n rows. Use only with order\_by
+  - order\_by - sort the rows by one or more columns
+  - where\_ - filter the rows returned
+
+-}
+player_aggregate : (PlayerAggregateOptionalArguments -> PlayerAggregateOptionalArguments) -> SelectionSet decodesTo Outsixer.Object.Player_aggregate -> SelectionSet decodesTo RootSubscription
+player_aggregate fillInOptionals object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { distinct_on = Absent, limit = Absent, offset = Absent, order_by = Absent, where_ = Absent }
+
+        optionalArgs =
+            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Outsixer.Enum.Player_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Outsixer.InputObject.encodePlayer_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Outsixer.InputObject.encodePlayer_bool_exp ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "player_aggregate" optionalArgs object_ identity
+
+
+type alias PlayerByPkRequiredArguments =
+    { id : Int }
+
+
+{-| fetch data from the table: "player" using primary key columns
+-}
+player_by_pk : PlayerByPkRequiredArguments -> SelectionSet decodesTo Outsixer.Object.Player -> SelectionSet (Maybe decodesTo) RootSubscription
+player_by_pk requiredArgs object_ =
+    Object.selectionForCompositeField "player_by_pk" [ Argument.required "id" requiredArgs.id Encode.int ] object_ (identity >> Decode.nullable)

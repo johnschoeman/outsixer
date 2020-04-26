@@ -21,8 +21,8 @@ type Model
 
 type alias AppData =
     { games : GameData
-    , playerName : Maybe String
-    , gameName : Maybe String
+    , playerName : String
+    , gameName : String
     }
 
 
@@ -64,8 +64,8 @@ init { apiEndpoint, apiKey } =
     in
     ( MainApp
         { games = RemoteData.NotAsked
-        , gameName = Nothing
-        , playerName = Nothing
+        , gameName = ""
+        , playerName = ""
         }
         env
     , API.fetchGames env ReceivedGames
@@ -110,8 +110,8 @@ update msg model =
         ( MainApp appData env, ReceivedCreateGameResponse createGameData ) ->
             ( MainApp appData env, Cmd.none )
 
-        ( _, JoinGame ) ->
-            ( model, Cmd.none )
+        ( MainApp { playerName, gameName } env, JoinGame ) ->
+            ( model, API.joinGame env playerName gameName ReceivedJoinGameResponse )
 
         ( _, ReceivedJoinGameResponse joinGameData ) ->
             ( model, Cmd.none )
@@ -145,34 +145,16 @@ page model =
                 ]
 
 
-nameInput : Maybe String -> Html Msg
-nameInput maybeName =
-    let
-        name =
-            case maybeName of
-                Just n ->
-                    n
-
-                Nothing ->
-                    ""
-    in
+nameInput : String -> Html Msg
+nameInput name =
     div []
         [ label [] [ text "Player Name: " ]
         , input [ onInput UpdatePlayerName ] [ text name ]
         ]
 
 
-joinGame : Maybe String -> Html Msg
-joinGame maybeGameName =
-    let
-        gameName =
-            case maybeGameName of
-                Just n ->
-                    n
-
-                Nothing ->
-                    ""
-    in
+joinGame : String -> Html Msg
+joinGame gameName =
     div []
         [ label [] [ text "Game Name: " ]
         , input [ onInput UpdateGameName ] [ text gameName ]

@@ -33,6 +33,20 @@ delete_game requiredArgs object_ =
     Object.selectionForCompositeField "delete_game" [ Argument.required "where" requiredArgs.where_ Outsixer.InputObject.encodeGame_bool_exp ] object_ (identity >> Decode.nullable)
 
 
+type alias DeletePlayerRequiredArguments =
+    { where_ : Outsixer.InputObject.Player_bool_exp }
+
+
+{-| delete data from the table: "player"
+
+  - where\_ - filter the rows which have to be deleted
+
+-}
+delete_player : DeletePlayerRequiredArguments -> SelectionSet decodesTo Outsixer.Object.Player_mutation_response -> SelectionSet (Maybe decodesTo) RootMutation
+delete_player requiredArgs object_ =
+    Object.selectionForCompositeField "delete_player" [ Argument.required "where" requiredArgs.where_ Outsixer.InputObject.encodePlayer_bool_exp ] object_ (identity >> Decode.nullable)
+
+
 type alias InsertGameOptionalArguments =
     { on_conflict : OptionalArgument Outsixer.InputObject.Game_on_conflict }
 
@@ -58,6 +72,33 @@ insert_game fillInOptionals requiredArgs object_ =
                 |> List.filterMap identity
     in
     Object.selectionForCompositeField "insert_game" (optionalArgs ++ [ Argument.required "objects" requiredArgs.objects (Outsixer.InputObject.encodeGame_insert_input |> Encode.list) ]) object_ (identity >> Decode.nullable)
+
+
+type alias InsertPlayerOptionalArguments =
+    { on_conflict : OptionalArgument Outsixer.InputObject.Player_on_conflict }
+
+
+type alias InsertPlayerRequiredArguments =
+    { objects : List Outsixer.InputObject.Player_insert_input }
+
+
+{-| insert data into the table: "player"
+
+  - objects - the rows to be inserted
+  - on\_conflict - on conflict condition
+
+-}
+insert_player : (InsertPlayerOptionalArguments -> InsertPlayerOptionalArguments) -> InsertPlayerRequiredArguments -> SelectionSet decodesTo Outsixer.Object.Player_mutation_response -> SelectionSet (Maybe decodesTo) RootMutation
+insert_player fillInOptionals requiredArgs object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { on_conflict = Absent }
+
+        optionalArgs =
+            [ Argument.optional "on_conflict" filledInOptionals.on_conflict Outsixer.InputObject.encodePlayer_on_conflict ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "insert_player" (optionalArgs ++ [ Argument.required "objects" requiredArgs.objects (Outsixer.InputObject.encodePlayer_insert_input |> Encode.list) ]) object_ (identity >> Decode.nullable)
 
 
 type alias UpdateGameOptionalArguments =
@@ -88,3 +129,33 @@ update_game fillInOptionals requiredArgs object_ =
                 |> List.filterMap identity
     in
     Object.selectionForCompositeField "update_game" (optionalArgs ++ [ Argument.required "where" requiredArgs.where_ Outsixer.InputObject.encodeGame_bool_exp ]) object_ (identity >> Decode.nullable)
+
+
+type alias UpdatePlayerOptionalArguments =
+    { inc_ : OptionalArgument Outsixer.InputObject.Player_inc_input
+    , set_ : OptionalArgument Outsixer.InputObject.Player_set_input
+    }
+
+
+type alias UpdatePlayerRequiredArguments =
+    { where_ : Outsixer.InputObject.Player_bool_exp }
+
+
+{-| update data of the table: "player"
+
+  - inc\_ - increments the integer columns with given value of the filtered values
+  - set\_ - sets the columns of the filtered rows to the given values
+  - where\_ - filter the rows which have to be updated
+
+-}
+update_player : (UpdatePlayerOptionalArguments -> UpdatePlayerOptionalArguments) -> UpdatePlayerRequiredArguments -> SelectionSet decodesTo Outsixer.Object.Player_mutation_response -> SelectionSet (Maybe decodesTo) RootMutation
+update_player fillInOptionals requiredArgs object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { inc_ = Absent, set_ = Absent }
+
+        optionalArgs =
+            [ Argument.optional "_inc" filledInOptionals.inc_ Outsixer.InputObject.encodePlayer_inc_input, Argument.optional "_set" filledInOptionals.set_ Outsixer.InputObject.encodePlayer_set_input ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "update_player" (optionalArgs ++ [ Argument.required "where" requiredArgs.where_ Outsixer.InputObject.encodePlayer_bool_exp ]) object_ (identity >> Decode.nullable)

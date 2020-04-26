@@ -59,3 +59,59 @@ type Game_var_samp_fields
 
 type Game_variance_fields
     = Game_variance_fields
+
+
+type Player
+    = Player
+
+
+type Player_aggregate
+    = Player_aggregate
+
+
+type Player_aggregate_fields
+    = Player_aggregate_fields
+
+
+type Player_avg_fields
+    = Player_avg_fields
+
+
+type Player_max_fields
+    = Player_max_fields
+
+
+type Player_min_fields
+    = Player_min_fields
+
+
+type Player_mutation_response
+    = Player_mutation_response
+
+
+type Player_stddev_fields
+    = Player_stddev_fields
+
+
+type Player_stddev_pop_fields
+    = Player_stddev_pop_fields
+
+
+type Player_stddev_samp_fields
+    = Player_stddev_samp_fields
+
+
+type Player_sum_fields
+    = Player_sum_fields
+
+
+type Player_var_pop_fields
+    = Player_var_pop_fields
+
+
+type Player_var_samp_fields
+    = Player_var_samp_fields
+
+
+type Player_variance_fields
+    = Player_variance_fields
