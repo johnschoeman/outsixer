@@ -102,7 +102,7 @@ createGameMutation name =
     Mutation.insert_game
         identity
         (insertGameArgs name)
-        gameMutationResposneSelection
+        gameMutationResponseSelection
 
 
 insertGameArgs : String -> Mutation.InsertGameRequiredArguments
@@ -115,8 +115,8 @@ insertGameObjects name =
     InputObject.buildGame_insert_input (\args -> { args | name = Present name })
 
 
-gameMutationResposneSelection : SelectionSet MutationResponse Object.Game_mutation_response
-gameMutationResposneSelection =
+gameMutationResponseSelection : SelectionSet MutationResponse Object.Game_mutation_response
+gameMutationResponseSelection =
     SelectionSet.map MutationResponse GameMutation.affected_rows
 
 
@@ -124,25 +124,25 @@ gameMutationResposneSelection =
 ---- JOIN GAME ----
 
 
-joinGame : Env -> String -> String -> Response (Maybe MutationResponse) msg -> Cmd msg
+joinGame : Env -> String -> Int -> Response (Maybe MutationResponse) msg -> Cmd msg
 joinGame env playerName gameName toMsg =
     makeGraphqlMutation env (joinGameMutation playerName gameName) toMsg
 
 
-joinGameMutation : String -> String -> SelectionSet (Maybe MutationResponse) RootMutation
+joinGameMutation : String -> Int -> SelectionSet (Maybe MutationResponse) RootMutation
 joinGameMutation playerName gameName =
     Mutation.insert_player
         identity
         (joinGameArgs playerName gameName)
-        gameMutationResposneSelection
+        playerMutationResponseSelection
 
 
-joinGameArgs : String -> String -> Mutation.InsertPlayerRequiredArguments
+joinGameArgs : String -> Int -> Mutation.InsertPlayerRequiredArguments
 joinGameArgs playerName gameName =
     Mutation.InsertPlayerRequiredArguments [ insertPlayerObjects playerName gameName ]
 
 
-insertPlayerObjects : String -> String -> InputObject.Player_insert_input
+insertPlayerObjects : String -> Int -> InputObject.Player_insert_input
 insertPlayerObjects playerName gameId =
     InputObject.buildPlayer_insert_input
         (\args ->
@@ -153,10 +153,52 @@ insertPlayerObjects playerName gameId =
         )
 
 
-playerMutationResposneSelection : SelectionSet MutationResponse Object.Player_mutation_response
-playerMutationResposneSelection =
+playerMutationResponseSelection : SelectionSet MutationResponse Object.Player_mutation_response
+playerMutationResponseSelection =
     SelectionSet.map MutationResponse PlayerMutation.affected_rows
 
 
 
----- START GAME ----
+---- SETUP GAME ----
+-- check if game is already started
+-- if not
+-- fetch all players for game by game_id
+-- assign each player a role, one master, one insider, the rest commoners
+-- update all of the players for the with thier new role
+-- create a word for the game
+-- update the game with the word
+-- start the game for the player
+-- if yes
+-- fetch the updated player role
+-- if the player is the insider or the master fetch the game word
+-- start a time
+
+
+startGame : Env -> Int -> Response (Maybe MutationResponse) msg -> Cmd msg
+startGame env gameId toMsg =
+    -- makeGraphqlMutation env (startGameMutation gameId) toMsg
+    Cmd.none
+
+
+
+-- startGameMutation : Int -> SelectionSet (Maybe MutationResponse) RootMutation
+-- startGameMutation gameId =
+--     Mutation.insert_player
+--         identity
+--         (startGameArgs gameId)
+--         playerMutationResponseSelection
+-- startGameArgs : Int -> Mutation.InsertPlayerRequiredArguments
+-- startGameArgs gameId =
+--     Mutation.InsertPlayerRequiredArguments [ insertPlayerObjects gameId ]
+-- insertPlayerObjects : Int -> InputObject.Player_insert_input
+-- insertPlayerObjects gameId =
+--     InputObject.buildPlayer_insert_input
+--         (\args ->
+--             { args
+--                 | name = Present playerName
+--                 , game_id = Present gameId
+--             }
+--         )
+-- playerMutationResponseSelection : SelectionSet MutationResponse Object.Player_mutation_response
+-- playerMutationResponseSelection =
+--     SelectionSet.map MutationResponse PlayerMutation.affected_rows

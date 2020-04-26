@@ -16,14 +16,48 @@ import RemoteData exposing (RemoteData)
 
 
 type Model
-    = MainApp AppData Env
+    = PreGame PlayerName GameId Env
+    | Lobby LobbyState Env
+    | InGame GameState Env
 
 
-type alias AppData =
-    { games : GameData
-    , playerName : String
-    , gameName : String
+type alias PlayerName =
+    String
+
+
+type alias GameId =
+    String
+
+
+type alias Word =
+    String
+
+
+type alias LobbyState =
+    { player : Player
+    , players : List Player
+    , gameId : Int
     }
+
+
+type alias GameState =
+    { player : Player
+    , players : List Player
+    , word : String
+    }
+
+
+type alias Player =
+    { id : Int
+    , name : String
+    , role : Maybe Role
+    }
+
+
+type Role
+    = Master
+    | Insider
+    | Commoner
 
 
 type alias GraphQLResponse data =
@@ -38,16 +72,34 @@ type alias GameData =
     GraphQLResponse (List Game)
 
 
-type alias CreateGameData =
-    GraphQLResponse (Maybe MutationResponse)
+type alias CreateGameResponseData =
+    { player : Player
+    , players : List Player
+    }
 
 
-type alias JoinGameData =
-    GraphQLResponse (Maybe MutationResponse)
+type alias CreateGameResponse =
+    GraphQLResponse CreateGameResponseData
 
 
-type alias StartGameData =
-    GraphQLResponse (Maybe MutationResponse)
+type alias JoinGameResponseData =
+    { player : Player
+    , players : List Player
+    }
+
+
+type alias JoinGameResponse =
+    GraphQLResponse JoinGameResponseData
+
+
+type alias StartGameResponseData =
+    { player : Player
+    , players : List Player
+    }
+
+
+type alias StartGameResponse =
+    GraphQLResponse StartGameResponseData
 
 
 type alias Flags =
@@ -62,13 +114,8 @@ init { apiEndpoint, apiKey } =
         env =
             { apiEndpoint = apiEndpoint, apiKey = apiKey }
     in
-    ( MainApp
-        { games = RemoteData.NotAsked
-        , gameName = ""
-        , playerName = ""
-        }
-        env
-    , API.fetchGames env ReceivedGames
+    ( PreGame "" "" env
+    , Cmd.none
     )
 
 
@@ -78,48 +125,97 @@ init { apiEndpoint, apiKey } =
 
 type Msg
     = UpdatePlayerName String
-    | UpdateGameName String
-    | ReceivedGames GameData
+    | UpdateGameId String
     | CreateGame
-    | ReceivedCreateGameResponse CreateGameData
+    | ReceivedCreateGameResponse CreateGameResponse
     | JoinGame
-    | ReceivedJoinGameResponse JoinGameData
+    | ReceivedJoinGameResponse JoinGameResponse
     | StartGame
-    | ReceivedStartGameResponse StartGameData
+    | ReceivedStartGameResponse StartGameResponse
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( model, msg ) of
-        ( MainApp appData env, UpdatePlayerName playerName ) ->
-            ( MainApp { appData | playerName = Just playerName } env, Cmd.none )
+        ( PreGame _ gameId env, UpdatePlayerName playerName ) ->
+            ( PreGame playerName gameId env, Cmd.none )
 
-        ( MainApp appData env, UpdateGameName gameName ) ->
-            ( MainApp { appData | gameName = Just gameName } env, Cmd.none )
+        ( PreGame playerName _ env, UpdateGameId gameId ) ->
+            ( PreGame playerName gameId env, Cmd.none )
 
-        ( MainApp appData env, ReceivedGames gameData ) ->
-            ( MainApp { appData | games = gameData } env, Cmd.none )
-
-        ( MainApp _ env, CreateGame ) ->
+        ( PreGame playerName _ env, CreateGame ) ->
             let
-                newGameName =
+                gameName =
                     "GAME"
             in
-            ( model, API.createGame env ReceivedCreateGameResponse )
+            ( model, API.createGame env gameName ReceivedCreateGameResponse )
 
-        ( MainApp appData env, ReceivedCreateGameResponse createGameData ) ->
-            ( MainApp appData env, Cmd.none )
+        ( PreGame playerName gameId env, ReceivedCreateGameResponse response ) ->
+            let
+                player =
+                    { id = 1, name = playerName, role = Nothing }
 
-        ( MainApp { playerName, gameName } env, JoinGame ) ->
-            ( model, API.joinGame env playerName gameName ReceivedJoinGameResponse )
+                lobbyData =
+                    { player = player, players = [ player ], gameId = 1 }
+            in
+            ( Lobby lobbyData env, Cmd.none )
 
-        ( _, ReceivedJoinGameResponse joinGameData ) ->
+        ( PreGame playerName gameId env, JoinGame ) ->
+            case String.toInt gameId of
+                Just id ->
+                    -- ( model, API.joinGame env playerName id ReceivedJoinGameResponse )
+                    ( model, Cmd.none )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        ( PreGame _ _ env, ReceivedJoinGameResponse response ) ->
+            case response of
+                RemoteData.Success joinGameData ->
+                    let
+                        player =
+                            joinGameData.player
+
+                        players =
+                            joinGameData.players
+
+                        lobbyData =
+                            { player = player, players = players, gameId = 1 }
+                    in
+                    ( Lobby lobbyData env, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        ( PreGame _ _ _, _ ) ->
             ( model, Cmd.none )
 
-        ( _, StartGame ) ->
+        ( Lobby lobbyData env, StartGame ) ->
+            -- ( model, API.startGame env lobbyData.gameId ReceivedStartGameResponse )
             ( model, Cmd.none )
 
-        ( _, ReceivedStartGameResponse startGameData ) ->
+        ( Lobby _ env, ReceivedStartGameResponse response ) ->
+            case response of
+                RemoteData.Success startGameData ->
+                    let
+                        player =
+                            { id = 1, name = "name", role = Just Master }
+
+                        players =
+                            [ player ]
+
+                        gameData =
+                            { player = player, players = players, word = "Bunny" }
+                    in
+                    ( InGame gameData env, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        ( Lobby _ _, _ ) ->
+            ( model, Cmd.none )
+
+        ( InGame _ _, _ ) ->
             ( model, Cmd.none )
 
 
@@ -135,13 +231,24 @@ view model =
 page : Model -> Html Msg
 page model =
     case model of
-        MainApp appData _ ->
+        PreGame playerName gameId _ ->
             div []
                 [ h1 [] [ text "Outsixer" ]
-                , nameInput appData.playerName
-                , joinGame appData.gameName
+                , nameInput playerName
+                , joinGame gameId
                 , createNewGame
-                , listGames appData.games
+                ]
+
+        Lobby { player, players } _ ->
+            div []
+                [ text "Lobby :"
+                , listPlayers players
+                , startGame
+                ]
+
+        InGame { player, players, word } _ ->
+            div []
+                [ text "Playing Game..."
                 ]
 
 
@@ -157,7 +264,7 @@ joinGame : String -> Html Msg
 joinGame gameName =
     div []
         [ label [] [ text "Game Name: " ]
-        , input [ onInput UpdateGameName ] [ text gameName ]
+        , input [ onInput UpdateGameId ] [ text gameName ]
         , button [ onClick JoinGame ] [ text "Join Game" ]
         ]
 
@@ -165,8 +272,20 @@ joinGame gameName =
 createNewGame : Html Msg
 createNewGame =
     div []
-        [ button [ onClick CreateGame ] [ text "CreateGame" ]
+        [ button [ onClick CreateGame ] [ text "Create Game" ]
         ]
+
+
+startGame : Html Msg
+startGame =
+    div []
+        [ button [ onClick StartGame ] [ text "Start Game" ]
+        ]
+
+
+listPlayers : List Player -> Html msg
+listPlayers players =
+    div [] [ text "list Players " ]
 
 
 listGames : GameData -> Html msg
