@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import API
+import API exposing (GraphQLResponse)
 import Browser
 import Env exposing (Env)
 import Game exposing (Game)
@@ -16,9 +16,25 @@ import RemoteData exposing (RemoteData)
 
 
 type Model
-    = Loading Env
-    | Error (Graphql.Http.Error (List Game)) Env
-    | Game (List Game) Env
+    = MainApp AppData Env
+
+
+type alias AppData =
+    { games : GameData
+    , gameName : CreateGameData
+    }
+
+
+type alias GameData =
+    RemoteData (Graphql.Http.Error (List Game)) (List Game)
+
+
+type alias MutationResponse =
+    { affected_rows : Int }
+
+
+type alias CreateGameData =
+    RemoteData (Graphql.Http.Error (Maybe MutationResponse)) (Maybe MutationResponse)
 
 
 type alias Flags =
@@ -33,7 +49,11 @@ init { apiEndpoint, apiKey } =
         env =
             { apiEndpoint = apiEndpoint, apiKey = apiKey }
     in
-    ( Loading env
+    ( MainApp
+        { games = RemoteData.NotAsked
+        , gameName = RemoteData.NotAsked
+        }
+        env
     , API.fetchGames env ReceivedGames
     )
 
@@ -44,37 +64,21 @@ init { apiEndpoint, apiKey } =
 
 type Msg
     = CreateGame
-    | ReceivedGames (RemoteData (Graphql.Http.Error (List Game)) (List Game))
+    | ReceivedGames GameData
+    | ReceivedCreateGameResponse CreateGameData
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( model, msg ) of
-        ( Loading env, ReceivedGames response ) ->
-            case response of
-                RemoteData.Success games ->
-                    ( Game games env, Cmd.none )
+        ( MainApp appData env, ReceivedGames gameData ) ->
+            ( MainApp { appData | games = gameData } env, Cmd.none )
 
-                RemoteData.Failure error ->
-                    ( Error error env, Cmd.none )
+        ( MainApp _ env, CreateGame ) ->
+            ( model, API.createGame env ReceivedCreateGameResponse )
 
-                RemoteData.Loading ->
-                    ( Loading env, Cmd.none )
-
-                RemoteData.NotAsked ->
-                    ( model, Cmd.none )
-
-        ( Game games env, CreateGame ) ->
-            ( model, Cmd.none )
-
-        ( Error _ _, _ ) ->
-            ( model, Cmd.none )
-
-        ( Loading _, _ ) ->
-            ( model, Cmd.none )
-
-        ( Game _ _, _ ) ->
-            ( model, Cmd.none )
+        ( MainApp appData env, ReceivedCreateGameResponse createGameData ) ->
+            ( MainApp { appData | gameName = createGameData } env, Cmd.none )
 
 
 
@@ -89,33 +93,28 @@ view model =
 page : Model -> Html Msg
 page model =
     case model of
-        Loading _ ->
-            div [] [ text "loading" ]
-
-        Error error _ ->
-            errorMessage error
-
-        Game games _ ->
+        MainApp appData _ ->
             div []
                 [ h1 [] [ text "Outsixer" ]
                 , button [ onClick CreateGame ] [ text "CreateGame" ]
-                , listGames games
+                , listGames appData.games
                 ]
 
 
-errorMessage : Graphql.Http.Error d -> Html Msg
-errorMessage error =
-    case error of
-        Graphql.Http.GraphqlError p graphqlErrors ->
-            div [] [ text "graphqlError" ]
+listGames : GameData -> Html msg
+listGames gameData =
+    case gameData of
+        RemoteData.NotAsked ->
+            text ""
 
-        Graphql.Http.HttpError httpError ->
-            div [] [ text <| API.showHttpError httpError ]
+        RemoteData.Loading ->
+            text "loading"
 
+        RemoteData.Failure error ->
+            errorMessage error
 
-listGames : List Game -> Html msg
-listGames games =
-    div [] (List.map gameListItem games)
+        RemoteData.Success games ->
+            div [] (List.map gameListItem games)
 
 
 gameListItem : Game -> Html msg
@@ -123,6 +122,16 @@ gameListItem game =
     div []
         [ text game.name
         ]
+
+
+errorMessage : Graphql.Http.Error d -> Html msg
+errorMessage error =
+    case error of
+        Graphql.Http.GraphqlError p graphqlErrors ->
+            div [] [ text "graphqlError" ]
+
+        Graphql.Http.HttpError httpError ->
+            div [] [ text <| API.showHttpError httpError ]
 
 
 

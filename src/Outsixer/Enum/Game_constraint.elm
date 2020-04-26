@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Enum.Game_constraint exposing (..)
+module Outsixer.Enum.Game_constraint exposing (..)
 
 import Json.Decode as Decode exposing (Decoder)
 

@@ -2,15 +2,8 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Subscription exposing (..)
+module Outsixer.Subscription exposing (..)
 
-import Api.Enum.Game_select_column
-import Api.InputObject
-import Api.Interface
-import Api.Object
-import Api.Scalar
-import Api.ScalarCodecs
-import Api.Union
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
 import Graphql.Internal.Encode as Encode exposing (Value)
@@ -18,14 +11,21 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode exposing (Decoder)
+import Outsixer.Enum.Game_select_column
+import Outsixer.InputObject
+import Outsixer.Interface
+import Outsixer.Object
+import Outsixer.Scalar
+import Outsixer.ScalarCodecs
+import Outsixer.Union
 
 
 type alias GameOptionalArguments =
-    { distinct_on : OptionalArgument (List Api.Enum.Game_select_column.Game_select_column)
+    { distinct_on : OptionalArgument (List Outsixer.Enum.Game_select_column.Game_select_column)
     , limit : OptionalArgument Int
     , offset : OptionalArgument Int
-    , order_by : OptionalArgument (List Api.InputObject.Game_order_by)
-    , where_ : OptionalArgument Api.InputObject.Game_bool_exp
+    , order_by : OptionalArgument (List Outsixer.InputObject.Game_order_by)
+    , where_ : OptionalArgument Outsixer.InputObject.Game_bool_exp
     }
 
 
@@ -38,25 +38,25 @@ type alias GameOptionalArguments =
   - where\_ - filter the rows returned
 
 -}
-game : (GameOptionalArguments -> GameOptionalArguments) -> SelectionSet decodesTo Api.Object.Game -> SelectionSet (List decodesTo) RootSubscription
+game : (GameOptionalArguments -> GameOptionalArguments) -> SelectionSet decodesTo Outsixer.Object.Game -> SelectionSet (List decodesTo) RootSubscription
 game fillInOptionals object_ =
     let
         filledInOptionals =
             fillInOptionals { distinct_on = Absent, limit = Absent, offset = Absent, order_by = Absent, where_ = Absent }
 
         optionalArgs =
-            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Api.Enum.Game_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Api.InputObject.encodeGame_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Api.InputObject.encodeGame_bool_exp ]
+            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Outsixer.Enum.Game_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Outsixer.InputObject.encodeGame_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Outsixer.InputObject.encodeGame_bool_exp ]
                 |> List.filterMap identity
     in
     Object.selectionForCompositeField "game" optionalArgs object_ (identity >> Decode.list)
 
 
 type alias GameAggregateOptionalArguments =
-    { distinct_on : OptionalArgument (List Api.Enum.Game_select_column.Game_select_column)
+    { distinct_on : OptionalArgument (List Outsixer.Enum.Game_select_column.Game_select_column)
     , limit : OptionalArgument Int
     , offset : OptionalArgument Int
-    , order_by : OptionalArgument (List Api.InputObject.Game_order_by)
-    , where_ : OptionalArgument Api.InputObject.Game_bool_exp
+    , order_by : OptionalArgument (List Outsixer.InputObject.Game_order_by)
+    , where_ : OptionalArgument Outsixer.InputObject.Game_bool_exp
     }
 
 
@@ -69,14 +69,14 @@ type alias GameAggregateOptionalArguments =
   - where\_ - filter the rows returned
 
 -}
-game_aggregate : (GameAggregateOptionalArguments -> GameAggregateOptionalArguments) -> SelectionSet decodesTo Api.Object.Game_aggregate -> SelectionSet decodesTo RootSubscription
+game_aggregate : (GameAggregateOptionalArguments -> GameAggregateOptionalArguments) -> SelectionSet decodesTo Outsixer.Object.Game_aggregate -> SelectionSet decodesTo RootSubscription
 game_aggregate fillInOptionals object_ =
     let
         filledInOptionals =
             fillInOptionals { distinct_on = Absent, limit = Absent, offset = Absent, order_by = Absent, where_ = Absent }
 
         optionalArgs =
-            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Api.Enum.Game_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Api.InputObject.encodeGame_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Api.InputObject.encodeGame_bool_exp ]
+            [ Argument.optional "distinct_on" filledInOptionals.distinct_on (Encode.enum Outsixer.Enum.Game_select_column.toString |> Encode.list), Argument.optional "limit" filledInOptionals.limit Encode.int, Argument.optional "offset" filledInOptionals.offset Encode.int, Argument.optional "order_by" filledInOptionals.order_by (Outsixer.InputObject.encodeGame_order_by |> Encode.list), Argument.optional "where" filledInOptionals.where_ Outsixer.InputObject.encodeGame_bool_exp ]
                 |> List.filterMap identity
     in
     Object.selectionForCompositeField "game_aggregate" optionalArgs object_ identity
@@ -88,6 +88,6 @@ type alias GameByPkRequiredArguments =
 
 {-| fetch data from the table: "game" using primary key columns
 -}
-game_by_pk : GameByPkRequiredArguments -> SelectionSet decodesTo Api.Object.Game -> SelectionSet (Maybe decodesTo) RootSubscription
+game_by_pk : GameByPkRequiredArguments -> SelectionSet decodesTo Outsixer.Object.Game -> SelectionSet (Maybe decodesTo) RootSubscription
 game_by_pk requiredArgs object_ =
     Object.selectionForCompositeField "game_by_pk" [ Argument.required "id" requiredArgs.id Encode.int ] object_ (identity >> Decode.nullable)

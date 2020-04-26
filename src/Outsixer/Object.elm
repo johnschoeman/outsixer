@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Object exposing (..)
+module Outsixer.Object exposing (..)
 
 
 type Game

@@ -2,22 +2,22 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.InputObject exposing (..)
+module Outsixer.InputObject exposing (..)
 
-import Api.Enum.Game_constraint
-import Api.Enum.Game_update_column
-import Api.Enum.Order_by
-import Api.Interface
-import Api.Object
-import Api.Scalar
-import Api.ScalarCodecs
-import Api.Union
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
 import Graphql.Internal.Encode as Encode exposing (Value)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
+import Outsixer.Enum.Game_constraint
+import Outsixer.Enum.Game_update_column
+import Outsixer.Enum.Order_by
+import Outsixer.Interface
+import Outsixer.Object
+import Outsixer.Scalar
+import Outsixer.ScalarCodecs
+import Outsixer.Union
 
 
 buildBoolean_comparison_exp : (Boolean_comparison_expOptionalFields -> Boolean_comparison_expOptionalFields) -> Boolean_comparison_exp
@@ -78,7 +78,7 @@ buildGame_aggregate_order_by fillOptionals =
 
 type alias Game_aggregate_order_byOptionalFields =
     { avg : OptionalArgument Game_avg_order_by
-    , count : OptionalArgument Api.Enum.Order_by.Order_by
+    , count : OptionalArgument Outsixer.Enum.Order_by.Order_by
     , max : OptionalArgument Game_max_order_by
     , min : OptionalArgument Game_min_order_by
     , stddev : OptionalArgument Game_stddev_order_by
@@ -95,7 +95,7 @@ type alias Game_aggregate_order_byOptionalFields =
 -}
 type alias Game_aggregate_order_by =
     { avg : OptionalArgument Game_avg_order_by
-    , count : OptionalArgument Api.Enum.Order_by.Order_by
+    , count : OptionalArgument Outsixer.Enum.Order_by.Order_by
     , max : OptionalArgument Game_max_order_by
     , min : OptionalArgument Game_min_order_by
     , stddev : OptionalArgument Game_stddev_order_by
@@ -113,7 +113,7 @@ type alias Game_aggregate_order_by =
 encodeGame_aggregate_order_by : Game_aggregate_order_by -> Value
 encodeGame_aggregate_order_by input =
     Encode.maybeObject
-        [ ( "avg", encodeGame_avg_order_by |> Encode.optional input.avg ), ( "count", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.count ), ( "max", encodeGame_max_order_by |> Encode.optional input.max ), ( "min", encodeGame_min_order_by |> Encode.optional input.min ), ( "stddev", encodeGame_stddev_order_by |> Encode.optional input.stddev ), ( "stddev_pop", encodeGame_stddev_pop_order_by |> Encode.optional input.stddev_pop ), ( "stddev_samp", encodeGame_stddev_samp_order_by |> Encode.optional input.stddev_samp ), ( "sum", encodeGame_sum_order_by |> Encode.optional input.sum ), ( "var_pop", encodeGame_var_pop_order_by |> Encode.optional input.var_pop ), ( "var_samp", encodeGame_var_samp_order_by |> Encode.optional input.var_samp ), ( "variance", encodeGame_variance_order_by |> Encode.optional input.variance ) ]
+        [ ( "avg", encodeGame_avg_order_by |> Encode.optional input.avg ), ( "count", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.count ), ( "max", encodeGame_max_order_by |> Encode.optional input.max ), ( "min", encodeGame_min_order_by |> Encode.optional input.min ), ( "stddev", encodeGame_stddev_order_by |> Encode.optional input.stddev ), ( "stddev_pop", encodeGame_stddev_pop_order_by |> Encode.optional input.stddev_pop ), ( "stddev_samp", encodeGame_stddev_samp_order_by |> Encode.optional input.stddev_samp ), ( "sum", encodeGame_sum_order_by |> Encode.optional input.sum ), ( "var_pop", encodeGame_var_pop_order_by |> Encode.optional input.var_pop ), ( "var_samp", encodeGame_var_samp_order_by |> Encode.optional input.var_samp ), ( "variance", encodeGame_variance_order_by |> Encode.optional input.variance ) ]
 
 
 buildGame_arr_rel_insert_input : Game_arr_rel_insert_inputRequiredFields -> (Game_arr_rel_insert_inputOptionalFields -> Game_arr_rel_insert_inputOptionalFields) -> Game_arr_rel_insert_input
@@ -170,13 +170,13 @@ buildGame_avg_order_by fillOptionals =
 
 
 type alias Game_avg_order_byOptionalFields =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Type for the Game\_avg\_order\_by input object.
 -}
 type alias Game_avg_order_by =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Encode a Game\_avg\_order\_by into a value that can be used as an argument.
@@ -184,7 +184,7 @@ type alias Game_avg_order_by =
 encodeGame_avg_order_by : Game_avg_order_by -> Value
 encodeGame_avg_order_by input =
     Encode.maybeObject
-        [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
+        [ ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
 buildGame_bool_exp : (Game_bool_expOptionalFields -> Game_bool_expOptionalFields) -> Game_bool_exp
@@ -280,10 +280,10 @@ buildGame_insert_input fillOptionals =
 
 type alias Game_insert_inputOptionalFields =
     { active : OptionalArgument Bool
-    , created_at : OptionalArgument Api.ScalarCodecs.Timestamptz
+    , created_at : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
     , id : OptionalArgument Int
     , name : OptionalArgument String
-    , updated_at : OptionalArgument Api.ScalarCodecs.Timestamptz
+    , updated_at : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
     }
 
 
@@ -291,10 +291,10 @@ type alias Game_insert_inputOptionalFields =
 -}
 type alias Game_insert_input =
     { active : OptionalArgument Bool
-    , created_at : OptionalArgument Api.ScalarCodecs.Timestamptz
+    , created_at : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
     , id : OptionalArgument Int
     , name : OptionalArgument String
-    , updated_at : OptionalArgument Api.ScalarCodecs.Timestamptz
+    , updated_at : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
     }
 
 
@@ -303,7 +303,7 @@ type alias Game_insert_input =
 encodeGame_insert_input : Game_insert_input -> Value
 encodeGame_insert_input input =
     Encode.maybeObject
-        [ ( "active", Encode.bool |> Encode.optional input.active ), ( "created_at", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.created_at ), ( "id", Encode.int |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "updated_at", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.updated_at ) ]
+        [ ( "active", Encode.bool |> Encode.optional input.active ), ( "created_at", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.created_at ), ( "id", Encode.int |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "updated_at", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.updated_at ) ]
 
 
 buildGame_max_order_by : (Game_max_order_byOptionalFields -> Game_max_order_byOptionalFields) -> Game_max_order_by
@@ -317,20 +317,20 @@ buildGame_max_order_by fillOptionals =
 
 
 type alias Game_max_order_byOptionalFields =
-    { created_at : OptionalArgument Api.Enum.Order_by.Order_by
-    , id : OptionalArgument Api.Enum.Order_by.Order_by
-    , name : OptionalArgument Api.Enum.Order_by.Order_by
-    , updated_at : OptionalArgument Api.Enum.Order_by.Order_by
+    { created_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , id : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , name : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , updated_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
     }
 
 
 {-| Type for the Game\_max\_order\_by input object.
 -}
 type alias Game_max_order_by =
-    { created_at : OptionalArgument Api.Enum.Order_by.Order_by
-    , id : OptionalArgument Api.Enum.Order_by.Order_by
-    , name : OptionalArgument Api.Enum.Order_by.Order_by
-    , updated_at : OptionalArgument Api.Enum.Order_by.Order_by
+    { created_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , id : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , name : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , updated_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
     }
 
 
@@ -339,7 +339,7 @@ type alias Game_max_order_by =
 encodeGame_max_order_by : Game_max_order_by -> Value
 encodeGame_max_order_by input =
     Encode.maybeObject
-        [ ( "created_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.created_at ), ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.name ), ( "updated_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.updated_at ) ]
+        [ ( "created_at", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.created_at ), ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.name ), ( "updated_at", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.updated_at ) ]
 
 
 buildGame_min_order_by : (Game_min_order_byOptionalFields -> Game_min_order_byOptionalFields) -> Game_min_order_by
@@ -353,20 +353,20 @@ buildGame_min_order_by fillOptionals =
 
 
 type alias Game_min_order_byOptionalFields =
-    { created_at : OptionalArgument Api.Enum.Order_by.Order_by
-    , id : OptionalArgument Api.Enum.Order_by.Order_by
-    , name : OptionalArgument Api.Enum.Order_by.Order_by
-    , updated_at : OptionalArgument Api.Enum.Order_by.Order_by
+    { created_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , id : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , name : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , updated_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
     }
 
 
 {-| Type for the Game\_min\_order\_by input object.
 -}
 type alias Game_min_order_by =
-    { created_at : OptionalArgument Api.Enum.Order_by.Order_by
-    , id : OptionalArgument Api.Enum.Order_by.Order_by
-    , name : OptionalArgument Api.Enum.Order_by.Order_by
-    , updated_at : OptionalArgument Api.Enum.Order_by.Order_by
+    { created_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , id : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , name : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , updated_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
     }
 
 
@@ -375,7 +375,7 @@ type alias Game_min_order_by =
 encodeGame_min_order_by : Game_min_order_by -> Value
 encodeGame_min_order_by input =
     Encode.maybeObject
-        [ ( "created_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.created_at ), ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.name ), ( "updated_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.updated_at ) ]
+        [ ( "created_at", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.created_at ), ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.name ), ( "updated_at", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.updated_at ) ]
 
 
 buildGame_obj_rel_insert_input : Game_obj_rel_insert_inputRequiredFields -> (Game_obj_rel_insert_inputOptionalFields -> Game_obj_rel_insert_inputOptionalFields) -> Game_obj_rel_insert_input
@@ -432,8 +432,8 @@ buildGame_on_conflict required fillOptionals =
 
 
 type alias Game_on_conflictRequiredFields =
-    { constraint : Api.Enum.Game_constraint.Game_constraint
-    , update_columns : List Api.Enum.Game_update_column.Game_update_column
+    { constraint : Outsixer.Enum.Game_constraint.Game_constraint
+    , update_columns : List Outsixer.Enum.Game_update_column.Game_update_column
     }
 
 
@@ -447,8 +447,8 @@ references to itself either directly (recursive) or indirectly (circular). See
 <https://github.com/dillonkearns/elm-graphql/issues/33>.
 -}
 type alias Game_on_conflictRaw =
-    { constraint : Api.Enum.Game_constraint.Game_constraint
-    , update_columns : List Api.Enum.Game_update_column.Game_update_column
+    { constraint : Outsixer.Enum.Game_constraint.Game_constraint
+    , update_columns : List Outsixer.Enum.Game_update_column.Game_update_column
     , where_ : OptionalArgument Game_bool_exp
     }
 
@@ -464,7 +464,7 @@ type Game_on_conflict
 encodeGame_on_conflict : Game_on_conflict -> Value
 encodeGame_on_conflict (Game_on_conflict input) =
     Encode.maybeObject
-        [ ( "constraint", Encode.enum Api.Enum.Game_constraint.toString input.constraint |> Just ), ( "update_columns", (Encode.enum Api.Enum.Game_update_column.toString |> Encode.list) input.update_columns |> Just ), ( "where", encodeGame_bool_exp |> Encode.optional input.where_ ) ]
+        [ ( "constraint", Encode.enum Outsixer.Enum.Game_constraint.toString input.constraint |> Just ), ( "update_columns", (Encode.enum Outsixer.Enum.Game_update_column.toString |> Encode.list) input.update_columns |> Just ), ( "where", encodeGame_bool_exp |> Encode.optional input.where_ ) ]
 
 
 buildGame_order_by : (Game_order_byOptionalFields -> Game_order_byOptionalFields) -> Game_order_by
@@ -478,22 +478,22 @@ buildGame_order_by fillOptionals =
 
 
 type alias Game_order_byOptionalFields =
-    { active : OptionalArgument Api.Enum.Order_by.Order_by
-    , created_at : OptionalArgument Api.Enum.Order_by.Order_by
-    , id : OptionalArgument Api.Enum.Order_by.Order_by
-    , name : OptionalArgument Api.Enum.Order_by.Order_by
-    , updated_at : OptionalArgument Api.Enum.Order_by.Order_by
+    { active : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , created_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , id : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , name : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , updated_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
     }
 
 
 {-| Type for the Game\_order\_by input object.
 -}
 type alias Game_order_by =
-    { active : OptionalArgument Api.Enum.Order_by.Order_by
-    , created_at : OptionalArgument Api.Enum.Order_by.Order_by
-    , id : OptionalArgument Api.Enum.Order_by.Order_by
-    , name : OptionalArgument Api.Enum.Order_by.Order_by
-    , updated_at : OptionalArgument Api.Enum.Order_by.Order_by
+    { active : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , created_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , id : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , name : OptionalArgument Outsixer.Enum.Order_by.Order_by
+    , updated_at : OptionalArgument Outsixer.Enum.Order_by.Order_by
     }
 
 
@@ -502,7 +502,7 @@ type alias Game_order_by =
 encodeGame_order_by : Game_order_by -> Value
 encodeGame_order_by input =
     Encode.maybeObject
-        [ ( "active", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.active ), ( "created_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.created_at ), ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.name ), ( "updated_at", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.updated_at ) ]
+        [ ( "active", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.active ), ( "created_at", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.created_at ), ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.name ), ( "updated_at", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.updated_at ) ]
 
 
 buildGame_set_input : (Game_set_inputOptionalFields -> Game_set_inputOptionalFields) -> Game_set_input
@@ -517,10 +517,10 @@ buildGame_set_input fillOptionals =
 
 type alias Game_set_inputOptionalFields =
     { active : OptionalArgument Bool
-    , created_at : OptionalArgument Api.ScalarCodecs.Timestamptz
+    , created_at : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
     , id : OptionalArgument Int
     , name : OptionalArgument String
-    , updated_at : OptionalArgument Api.ScalarCodecs.Timestamptz
+    , updated_at : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
     }
 
 
@@ -528,10 +528,10 @@ type alias Game_set_inputOptionalFields =
 -}
 type alias Game_set_input =
     { active : OptionalArgument Bool
-    , created_at : OptionalArgument Api.ScalarCodecs.Timestamptz
+    , created_at : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
     , id : OptionalArgument Int
     , name : OptionalArgument String
-    , updated_at : OptionalArgument Api.ScalarCodecs.Timestamptz
+    , updated_at : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
     }
 
 
@@ -540,7 +540,7 @@ type alias Game_set_input =
 encodeGame_set_input : Game_set_input -> Value
 encodeGame_set_input input =
     Encode.maybeObject
-        [ ( "active", Encode.bool |> Encode.optional input.active ), ( "created_at", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.created_at ), ( "id", Encode.int |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "updated_at", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.updated_at ) ]
+        [ ( "active", Encode.bool |> Encode.optional input.active ), ( "created_at", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.created_at ), ( "id", Encode.int |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "updated_at", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.updated_at ) ]
 
 
 buildGame_stddev_order_by : (Game_stddev_order_byOptionalFields -> Game_stddev_order_byOptionalFields) -> Game_stddev_order_by
@@ -554,13 +554,13 @@ buildGame_stddev_order_by fillOptionals =
 
 
 type alias Game_stddev_order_byOptionalFields =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Type for the Game\_stddev\_order\_by input object.
 -}
 type alias Game_stddev_order_by =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Encode a Game\_stddev\_order\_by into a value that can be used as an argument.
@@ -568,7 +568,7 @@ type alias Game_stddev_order_by =
 encodeGame_stddev_order_by : Game_stddev_order_by -> Value
 encodeGame_stddev_order_by input =
     Encode.maybeObject
-        [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
+        [ ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
 buildGame_stddev_pop_order_by : (Game_stddev_pop_order_byOptionalFields -> Game_stddev_pop_order_byOptionalFields) -> Game_stddev_pop_order_by
@@ -582,13 +582,13 @@ buildGame_stddev_pop_order_by fillOptionals =
 
 
 type alias Game_stddev_pop_order_byOptionalFields =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Type for the Game\_stddev\_pop\_order\_by input object.
 -}
 type alias Game_stddev_pop_order_by =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Encode a Game\_stddev\_pop\_order\_by into a value that can be used as an argument.
@@ -596,7 +596,7 @@ type alias Game_stddev_pop_order_by =
 encodeGame_stddev_pop_order_by : Game_stddev_pop_order_by -> Value
 encodeGame_stddev_pop_order_by input =
     Encode.maybeObject
-        [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
+        [ ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
 buildGame_stddev_samp_order_by : (Game_stddev_samp_order_byOptionalFields -> Game_stddev_samp_order_byOptionalFields) -> Game_stddev_samp_order_by
@@ -610,13 +610,13 @@ buildGame_stddev_samp_order_by fillOptionals =
 
 
 type alias Game_stddev_samp_order_byOptionalFields =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Type for the Game\_stddev\_samp\_order\_by input object.
 -}
 type alias Game_stddev_samp_order_by =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Encode a Game\_stddev\_samp\_order\_by into a value that can be used as an argument.
@@ -624,7 +624,7 @@ type alias Game_stddev_samp_order_by =
 encodeGame_stddev_samp_order_by : Game_stddev_samp_order_by -> Value
 encodeGame_stddev_samp_order_by input =
     Encode.maybeObject
-        [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
+        [ ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
 buildGame_sum_order_by : (Game_sum_order_byOptionalFields -> Game_sum_order_byOptionalFields) -> Game_sum_order_by
@@ -638,13 +638,13 @@ buildGame_sum_order_by fillOptionals =
 
 
 type alias Game_sum_order_byOptionalFields =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Type for the Game\_sum\_order\_by input object.
 -}
 type alias Game_sum_order_by =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Encode a Game\_sum\_order\_by into a value that can be used as an argument.
@@ -652,7 +652,7 @@ type alias Game_sum_order_by =
 encodeGame_sum_order_by : Game_sum_order_by -> Value
 encodeGame_sum_order_by input =
     Encode.maybeObject
-        [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
+        [ ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
 buildGame_var_pop_order_by : (Game_var_pop_order_byOptionalFields -> Game_var_pop_order_byOptionalFields) -> Game_var_pop_order_by
@@ -666,13 +666,13 @@ buildGame_var_pop_order_by fillOptionals =
 
 
 type alias Game_var_pop_order_byOptionalFields =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Type for the Game\_var\_pop\_order\_by input object.
 -}
 type alias Game_var_pop_order_by =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Encode a Game\_var\_pop\_order\_by into a value that can be used as an argument.
@@ -680,7 +680,7 @@ type alias Game_var_pop_order_by =
 encodeGame_var_pop_order_by : Game_var_pop_order_by -> Value
 encodeGame_var_pop_order_by input =
     Encode.maybeObject
-        [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
+        [ ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
 buildGame_var_samp_order_by : (Game_var_samp_order_byOptionalFields -> Game_var_samp_order_byOptionalFields) -> Game_var_samp_order_by
@@ -694,13 +694,13 @@ buildGame_var_samp_order_by fillOptionals =
 
 
 type alias Game_var_samp_order_byOptionalFields =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Type for the Game\_var\_samp\_order\_by input object.
 -}
 type alias Game_var_samp_order_by =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Encode a Game\_var\_samp\_order\_by into a value that can be used as an argument.
@@ -708,7 +708,7 @@ type alias Game_var_samp_order_by =
 encodeGame_var_samp_order_by : Game_var_samp_order_by -> Value
 encodeGame_var_samp_order_by input =
     Encode.maybeObject
-        [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
+        [ ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
 buildGame_variance_order_by : (Game_variance_order_byOptionalFields -> Game_variance_order_byOptionalFields) -> Game_variance_order_by
@@ -722,13 +722,13 @@ buildGame_variance_order_by fillOptionals =
 
 
 type alias Game_variance_order_byOptionalFields =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Type for the Game\_variance\_order\_by input object.
 -}
 type alias Game_variance_order_by =
-    { id : OptionalArgument Api.Enum.Order_by.Order_by }
+    { id : OptionalArgument Outsixer.Enum.Order_by.Order_by }
 
 
 {-| Encode a Game\_variance\_order\_by into a value that can be used as an argument.
@@ -736,7 +736,7 @@ type alias Game_variance_order_by =
 encodeGame_variance_order_by : Game_variance_order_by -> Value
 encodeGame_variance_order_by input =
     Encode.maybeObject
-        [ ( "id", Encode.enum Api.Enum.Order_by.toString |> Encode.optional input.id ) ]
+        [ ( "id", Encode.enum Outsixer.Enum.Order_by.toString |> Encode.optional input.id ) ]
 
 
 buildInt_comparison_exp : (Int_comparison_expOptionalFields -> Int_comparison_expOptionalFields) -> Int_comparison_exp
@@ -854,30 +854,30 @@ buildTimestamptz_comparison_exp fillOptionals =
 
 
 type alias Timestamptz_comparison_expOptionalFields =
-    { eq_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , gt_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , gte_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , in_ : OptionalArgument (List Api.ScalarCodecs.Timestamptz)
+    { eq_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , gt_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , gte_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , in_ : OptionalArgument (List Outsixer.ScalarCodecs.Timestamptz)
     , is_null_ : OptionalArgument Bool
-    , lt_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , lte_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , neq_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , nin_ : OptionalArgument (List Api.ScalarCodecs.Timestamptz)
+    , lt_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , lte_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , neq_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , nin_ : OptionalArgument (List Outsixer.ScalarCodecs.Timestamptz)
     }
 
 
 {-| Type for the Timestamptz\_comparison\_exp input object.
 -}
 type alias Timestamptz_comparison_exp =
-    { eq_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , gt_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , gte_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , in_ : OptionalArgument (List Api.ScalarCodecs.Timestamptz)
+    { eq_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , gt_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , gte_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , in_ : OptionalArgument (List Outsixer.ScalarCodecs.Timestamptz)
     , is_null_ : OptionalArgument Bool
-    , lt_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , lte_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , neq_ : OptionalArgument Api.ScalarCodecs.Timestamptz
-    , nin_ : OptionalArgument (List Api.ScalarCodecs.Timestamptz)
+    , lt_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , lte_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , neq_ : OptionalArgument Outsixer.ScalarCodecs.Timestamptz
+    , nin_ : OptionalArgument (List Outsixer.ScalarCodecs.Timestamptz)
     }
 
 
@@ -886,4 +886,4 @@ type alias Timestamptz_comparison_exp =
 encodeTimestamptz_comparison_exp : Timestamptz_comparison_exp -> Value
 encodeTimestamptz_comparison_exp input =
     Encode.maybeObject
-        [ ( "_eq", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.eq_ ), ( "_gt", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.gt_ ), ( "_gte", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.gte_ ), ( "_in", ((Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.list) |> Encode.optional input.in_ ), ( "_is_null", Encode.bool |> Encode.optional input.is_null_ ), ( "_lt", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.lt_ ), ( "_lte", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.lte_ ), ( "_neq", (Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.neq_ ), ( "_nin", ((Api.ScalarCodecs.codecs |> Api.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.list) |> Encode.optional input.nin_ ) ]
+        [ ( "_eq", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.eq_ ), ( "_gt", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.gt_ ), ( "_gte", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.gte_ ), ( "_in", ((Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.list) |> Encode.optional input.in_ ), ( "_is_null", Encode.bool |> Encode.optional input.is_null_ ), ( "_lt", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.lt_ ), ( "_lte", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.lte_ ), ( "_neq", (Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.optional input.neq_ ), ( "_nin", ((Outsixer.ScalarCodecs.codecs |> Outsixer.Scalar.unwrapEncoder .codecTimestamptz) |> Encode.list) |> Encode.optional input.nin_ ) ]

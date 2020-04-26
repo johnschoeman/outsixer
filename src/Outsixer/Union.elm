@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Interface exposing (..)
+module Outsixer.Union exposing (..)
 
 
 placeholder : String

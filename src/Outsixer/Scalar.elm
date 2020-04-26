@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Scalar exposing (Codecs, Id(..), Timestamptz(..), defaultCodecs, defineCodecs, unwrapCodecs, unwrapEncoder)
+module Outsixer.Scalar exposing (Codecs, Id(..), Timestamptz(..), defaultCodecs, defineCodecs, unwrapCodecs, unwrapEncoder)
 
 import Graphql.Codec exposing (Codec)
 import Graphql.Internal.Builder.Object as Object

@@ -2,12 +2,12 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Enum.Game_update_column exposing (..)
+module Outsixer.Enum.Game_select_column exposing (..)
 
 import Json.Decode as Decode exposing (Decoder)
 
 
-{-| update columns of table "game"
+{-| select columns of table "game"
 
   - Active - column name
   - Created\_at - column name
@@ -16,7 +16,7 @@ import Json.Decode as Decode exposing (Decoder)
   - Updated\_at - column name
 
 -}
-type Game_update_column
+type Game_select_column
     = Active
     | Created_at
     | Id
@@ -24,12 +24,12 @@ type Game_update_column
     | Updated_at
 
 
-list : List Game_update_column
+list : List Game_select_column
 list =
     [ Active, Created_at, Id, Name, Updated_at ]
 
 
-decoder : Decoder Game_update_column
+decoder : Decoder Game_select_column
 decoder =
     Decode.string
         |> Decode.andThen
@@ -51,13 +51,13 @@ decoder =
                         Decode.succeed Updated_at
 
                     _ ->
-                        Decode.fail ("Invalid Game_update_column type, " ++ string ++ " try re-running the @dillonkearns/elm-graphql CLI ")
+                        Decode.fail ("Invalid Game_select_column type, " ++ string ++ " try re-running the @dillonkearns/elm-graphql CLI ")
             )
 
 
 {-| Convert from the union type representating the Enum to a string that the GraphQL server will recognize.
 -}
-toString : Game_update_column -> String
+toString : Game_select_column -> String
 toString enum =
     case enum of
         Active ->
@@ -87,7 +87,7 @@ This is the inverse of the Enum `toString` function. So you can call `toString` 
 This can be useful for generating Strings to use for <select> menus to check which item was selected.
 
 -}
-fromString : String -> Maybe Game_update_column
+fromString : String -> Maybe Game_select_column
 fromString enumString =
     case enumString of
         "active" ->

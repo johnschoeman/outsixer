@@ -2,14 +2,8 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Api.Object.Game_stddev_fields exposing (..)
+module Outsixer.Object.Game_var_samp_fields exposing (..)
 
-import Api.InputObject
-import Api.Interface
-import Api.Object
-import Api.Scalar
-import Api.ScalarCodecs
-import Api.Union
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
 import Graphql.Internal.Encode as Encode exposing (Value)
@@ -17,8 +11,14 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
+import Outsixer.InputObject
+import Outsixer.Interface
+import Outsixer.Object
+import Outsixer.Scalar
+import Outsixer.ScalarCodecs
+import Outsixer.Union
 
 
-id : SelectionSet (Maybe Float) Api.Object.Game_stddev_fields
+id : SelectionSet (Maybe Float) Outsixer.Object.Game_var_samp_fields
 id =
     Object.selectionForField "(Maybe Float)" "id" [] (Decode.float |> Decode.nullable)
