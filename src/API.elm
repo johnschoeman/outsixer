@@ -1,14 +1,21 @@
 module API exposing (..)
 
-import Api.Object as Object
-import Api.Object.Game as GameObject
-import Api.Query as Query
 import Env exposing (Env)
 import Game exposing (Game)
 import Graphql.Http
-import Graphql.Operation exposing (RootQuery)
+import Graphql.Operation exposing (RootMutation, RootQuery)
+import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
 import Json.Decode as Decode
+import Outsixer.InputObject as InputObject
+import Outsixer.Mutation as Mutation
+import Outsixer.Object as Object
+import Outsixer.Object.Game as GameObject
+import Outsixer.Object.Game_mutation_response as GameMutation
+import Outsixer.Object.Player as PlayerObject
+import Outsixer.Object.Player_mutation_response as PlayerMutation
+import Outsixer.Query as Query
+import Player exposing (Player)
 import RemoteData exposing (RemoteData)
 
 
@@ -16,24 +23,17 @@ type alias Games =
     List Game
 
 
-fetchGames : Env -> (RemoteData (Graphql.Http.Error Games) Games -> msg) -> Cmd msg
-fetchGames env toMsg =
-    queryGames
-        |> Graphql.Http.queryRequest env.apiEndpoint
-        |> Graphql.Http.withHeader "x-hasura-admin-secret" env.apiKey
-        |> Graphql.Http.send (RemoteData.fromResult >> toMsg)
+type alias Response data msg =
+    RemoteData (Graphql.Http.Error data) data -> msg
 
 
-queryGames : SelectionSet (List Game) RootQuery
-queryGames =
-    Query.game (\a -> a) gameSelection
+type GraphQLResponse decodesTo
+    = GraphQLResponse (RemoteData (Graphql.Http.Error decodesTo) decodesTo)
 
 
-gameSelection : SelectionSet Game Object.Game
-gameSelection =
-    SelectionSet.succeed Game
-        |> with GameObject.name
-        |> with GameObject.active
+type alias AffectedRowsResponse =
+    { affected_rows : Int
+    }
 
 
 showHttpError : Graphql.Http.HttpError -> String
@@ -50,3 +50,285 @@ showHttpError error =
 
         _ ->
             "Http Error"
+
+
+makeGraphqlQuery : Env -> SelectionSet data RootQuery -> Response data msg -> Cmd msg
+makeGraphqlQuery env query toMsg =
+    query
+        |> Graphql.Http.queryRequest env.apiEndpoint
+        |> Graphql.Http.withHeader "x-hasura-admin-secret" env.apiKey
+        |> Graphql.Http.send (RemoteData.fromResult >> toMsg)
+
+
+makeGraphqlMutation : Env -> SelectionSet data RootMutation -> Response data msg -> Cmd msg
+makeGraphqlMutation env query toMsg =
+    query
+        |> Graphql.Http.mutationRequest env.apiEndpoint
+        |> Graphql.Http.withHeader "x-hasura-admin-secret" env.apiKey
+        |> Graphql.Http.send (RemoteData.fromResult >> toMsg)
+
+
+
+---- FETCH PLAYERS ----
+
+
+type alias PlayersResponse =
+    RemoteData (Graphql.Http.Error (List Player)) (List Player)
+
+
+fetchPlayers : Env -> Int -> Response (List Player) msg -> Cmd msg
+fetchPlayers env gameId toMsg =
+    makeGraphqlQuery env playersQuery toMsg
+
+
+playersQuery : SelectionSet (List Player) RootQuery
+playersQuery =
+    Query.player identity playerSelection
+
+
+playerSelection : SelectionSet Player Object.Player
+playerSelection =
+    SelectionSet.succeed Player
+        |> with PlayerObject.id
+        |> with PlayerObject.name
+        |> with PlayerObject.game_id
+        |> with PlayerObject.role
+
+
+
+---- FETCH GAME ----
+-- query {
+--   game(where: {id: {_eq: 1}}) {
+--     active
+--     word
+--     players {
+--       id
+--       role
+--       name
+--     }
+--   }
+-- }
+
+
+type alias GameResponseData =
+    List GameData
+
+
+type alias GameData =
+    { active : Bool
+    , word : String
+    , players : List Player
+    }
+
+
+type alias GameResponse =
+    RemoteData (Graphql.Http.Error GameResponseData) GameResponseData
+
+
+fetchGame : Env -> Int -> Response GameResponseData msg -> Cmd msg
+fetchGame env gameId toMsg =
+    makeGraphqlQuery env (gameQuery gameId) toMsg
+
+
+gameQuery : Int -> SelectionSet GameResponseData RootQuery
+gameQuery gameId =
+    Query.game (gameOptionalArgument gameId) gameSelection
+
+
+gameOptionalArgument : Int -> Query.GameOptionalArguments -> Query.GameOptionalArguments
+gameOptionalArgument gameId optionalArgs =
+    { optionalArgs | where_ = whereIdIsEq gameId }
+
+
+whereIdIsEq : Int -> OptionalArgument InputObject.Game_bool_exp
+whereIdIsEq gameId =
+    Present <| InputObject.buildGame_bool_exp (\args -> { args | id = idIsEq gameId })
+
+
+idIsEq : Int -> OptionalArgument InputObject.Int_comparison_exp
+idIsEq gameId =
+    Present <| InputObject.buildInt_comparison_exp (\args -> { args | eq_ = Present gameId })
+
+
+gameSelection : SelectionSet GameData Object.Game
+gameSelection =
+    SelectionSet.map3 GameData
+        GameObject.active
+        GameObject.word
+        (GameObject.players identity playerFragment)
+
+
+
+---- CREATE GAME ----
+-- mutation ($name: String!) {
+--   insert_game(objects: {name: $name}) {
+--     affected_rows
+--     returning {
+--       id
+--       name
+--       active
+--     }
+--   }
+-- }
+
+
+type alias CreateGameResponseData =
+    { returning : List Game
+    }
+
+
+type alias CreateGameResponse =
+    RemoteData (Graphql.Http.Error (Maybe CreateGameResponseData)) (Maybe CreateGameResponseData)
+
+
+createGame : Env -> String -> Response (Maybe CreateGameResponseData) msg -> Cmd msg
+createGame env name toMsg =
+    makeGraphqlMutation env (createGameMutation name) toMsg
+
+
+createGameMutation : String -> SelectionSet (Maybe CreateGameResponseData) RootMutation
+createGameMutation name =
+    Mutation.insert_game
+        identity
+        (insertGameArgs name)
+        gameAffectedRowsResponseSelection
+
+
+insertGameArgs : String -> Mutation.InsertGameRequiredArguments
+insertGameArgs name =
+    Mutation.InsertGameRequiredArguments [ insertGameObjects name ]
+
+
+insertGameObjects : String -> InputObject.Game_insert_input
+insertGameObjects name =
+    InputObject.buildGame_insert_input (\args -> { args | name = Present name })
+
+
+gameAffectedRowsResponseSelection : SelectionSet CreateGameResponseData Object.Game_mutation_response
+gameAffectedRowsResponseSelection =
+    SelectionSet.map CreateGameResponseData
+        (GameMutation.returning gameFragment)
+
+
+gameFragment : SelectionSet Game Object.Game
+gameFragment =
+    SelectionSet.succeed Game
+        |> with GameObject.id
+        |> with GameObject.name
+        |> with GameObject.active
+        |> with GameObject.word
+
+
+
+---- JOIN LOBBY ----
+-- mutation ($name: String! $game_id: Int!) {
+--   insert_game(objects: {name: $name, game_id: $game_id}) {
+--     returning {
+--       id
+--       name
+--       game_id
+--       role
+--     }
+--   }
+-- }
+
+
+type alias JoinLobbyResponseData =
+    { returning : List Player
+    }
+
+
+type alias JoinLobbyResponse =
+    RemoteData (Graphql.Http.Error (Maybe JoinLobbyResponseData)) (Maybe JoinLobbyResponseData)
+
+
+joinLobby : Env -> String -> Int -> Response (Maybe JoinLobbyResponseData) msg -> Cmd msg
+joinLobby env playerName gameId toMsg =
+    makeGraphqlMutation env (joinLobbyMutation playerName gameId) toMsg
+
+
+joinLobbyMutation : String -> Int -> SelectionSet (Maybe JoinLobbyResponseData) RootMutation
+joinLobbyMutation playerName gameId =
+    Mutation.insert_player
+        identity
+        (joinGameArgs playerName gameId)
+        playerAffectedRowsResponseSelection
+
+
+joinGameArgs : String -> Int -> Mutation.InsertPlayerRequiredArguments
+joinGameArgs playerName gameId =
+    Mutation.InsertPlayerRequiredArguments [ insertPlayerObjects playerName gameId ]
+
+
+insertPlayerObjects : String -> Int -> InputObject.Player_insert_input
+insertPlayerObjects playerName gameId =
+    InputObject.buildPlayer_insert_input
+        (\args ->
+            { args
+                | name = Present playerName
+                , game_id = Present gameId
+            }
+        )
+
+
+playerAffectedRowsResponseSelection : SelectionSet JoinLobbyResponseData Object.Player_mutation_response
+playerAffectedRowsResponseSelection =
+    SelectionSet.map JoinLobbyResponseData returningPlayerFragment
+
+
+returningPlayerFragment : SelectionSet (List Player) Object.Player_mutation_response
+returningPlayerFragment =
+    PlayerMutation.returning playerFragment
+
+
+playerFragment : SelectionSet Player Object.Player
+playerFragment =
+    SelectionSet.succeed Player
+        |> with PlayerObject.id
+        |> with PlayerObject.name
+        |> with PlayerObject.game_id
+        |> with PlayerObject.role
+
+
+
+---- START GAME ----
+-- mutation($id: !Int $word: !String) {
+--   update_game(_set: {word: $word, active: true}, _inc: {id: $id})
+
+
+type alias StartGameResponseData =
+    ()
+
+
+type alias StartGameResponse =
+    RemoteData (Graphql.Http.Error StartGameResponseData) StartGameResponseData
+
+
+startGame : Env -> Int -> String -> Response StartGameResponseData msg -> Cmd msg
+startGame env gameId word toMsg =
+    -- makeGraphqlMutation env (startGameMutation gameId) toMsg
+    Cmd.none
+
+
+
+-- startGameMutation : Int -> SelectionSet (Maybe AffectedRowsResponse) RootMutation
+-- startGameMutation gameId =
+--     Mutation.insert_player
+--         identity
+--         (startGameArgs gameId)
+--         playerAffectedRowsResponseSelection
+-- startGameArgs : Int -> Mutation.InsertPlayerRequiredArguments
+-- startGameArgs gameId =
+--     Mutation.InsertPlayerRequiredArguments [ insertPlayerObjects gameId ]
+-- insertPlayerObjects : Int -> InputObject.Player_insert_input
+-- insertPlayerObjects gameId =
+--     InputObject.buildPlayer_insert_input
+--         (\args ->
+--             { args
+--                 | name = Present playerName
+--                 , game_id = Present gameId
+--             }
+--         )
+-- playerAffectedRowsResponseSelection : SelectionSet AffectedRowsResponse Object.Player_mutation_response
+-- playerAffectedRowsResponseSelection =
+--     SelectionSet.map AffectedRowsResponse PlayerMutation.affected_rows
