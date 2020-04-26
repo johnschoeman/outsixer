@@ -84,20 +84,40 @@ gamesQuery =
 gameSelection : SelectionSet Game Object.Game
 gameSelection =
     SelectionSet.succeed Game
+        |> with GameObject.id
         |> with GameObject.name
         |> with GameObject.active
 
 
 
 ---- CREATE GAME ----
+-- mutation ($name: String!) {
+--   insert_game(objects: {name: $name}) {
+--     affected_rows
+--     returning {
+--       id
+--       name
+--       active
+--     }
+--   }
+-- }
 
 
-createGame : Env -> String -> Response (Maybe MutationResponse) msg -> Cmd msg
+type alias CreateGameResponseData =
+    { returning : List Game
+    }
+
+
+type alias CreateGameResponse =
+    Response (Maybe CreateGameResponseData)
+
+
+createGame : Env -> String -> Response (Maybe CreateGameResponseData) msg -> Cmd msg
 createGame env name toMsg =
     makeGraphqlMutation env (createGameMutation name) toMsg
 
 
-createGameMutation : String -> SelectionSet (Maybe MutationResponse) RootMutation
+createGameMutation : String -> SelectionSet (Maybe CreateGameResponseData) RootMutation
 createGameMutation name =
     Mutation.insert_game
         identity
@@ -115,9 +135,22 @@ insertGameObjects name =
     InputObject.buildGame_insert_input (\args -> { args | name = Present name })
 
 
-gameMutationResponseSelection : SelectionSet MutationResponse Object.Game_mutation_response
+gameMutationResponseSelection : SelectionSet CreateGameResponseData Object.Game_mutation_response
 gameMutationResponseSelection =
-    SelectionSet.map MutationResponse GameMutation.affected_rows
+    SelectionSet.map CreateGameResponseData returningFragment
+
+
+returningFragment : SelectionSet (List Game) Object.Game_mutation_response
+returningFragment =
+    GameMutation.returning gameFragment
+
+
+gameFragment : SelectionSet Game Object.Game
+gameFragment =
+    SelectionSet.succeed Game
+        |> with GameObject.id
+        |> with GameObject.name
+        |> with GameObject.active
 
 
 

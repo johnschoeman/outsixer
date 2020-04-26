@@ -2,6 +2,7 @@ module Game exposing (Game)
 
 
 type alias Game =
-    { name : String
+    { id : Int
+    , name : String
     , active : Bool
     }

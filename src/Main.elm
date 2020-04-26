@@ -34,8 +34,8 @@ type alias Word =
 
 
 type alias LobbyState =
-    { player : Player
-    , players : List Player
+    { player : GraphQLResponse Player
+    , players : GraphQLResponse (List Player)
     , gameId : Int
     }
 
@@ -64,22 +64,8 @@ type alias GraphQLResponse data =
     RemoteData (Graphql.Http.Error data) data
 
 
-type alias MutationResponse =
-    { affected_rows : Int }
-
-
 type alias GameData =
     GraphQLResponse (List Game)
-
-
-type alias CreateGameResponseData =
-    { player : Player
-    , players : List Player
-    }
-
-
-type alias CreateGameResponse =
-    GraphQLResponse CreateGameResponseData
 
 
 type alias JoinGameResponseData =
@@ -127,7 +113,7 @@ type Msg
     = UpdatePlayerName String
     | UpdateGameId String
     | CreateGame
-    | ReceivedCreateGameResponse CreateGameResponse
+    | ReceivedCreateGameResponse API.CreateGameResponse
     | JoinGame
     | ReceivedJoinGameResponse JoinGameResponse
     | StartGame
@@ -151,14 +137,20 @@ update msg model =
             ( model, API.createGame env gameName ReceivedCreateGameResponse )
 
         ( PreGame playerName gameId env, ReceivedCreateGameResponse response ) ->
-            let
-                player =
-                    { id = 1, name = playerName, role = Nothing }
+            case response of
+                RemoteData.Success createGameData ->
+                    let
+                        lobbyData =
+                            { player = RemoteData.NotAsked
+                            , players = RemoteData.NotAsked
+                            , gameId = createGameData.id
+                            }
+                    in
+                    -- ( Lobby lobbyData env, API.joinGame env gameId playerName )
+                    ( Lobby lobbyData env, Cmd.none )
 
-                lobbyData =
-                    { player = player, players = [ player ], gameId = 1 }
-            in
-            ( Lobby lobbyData env, Cmd.none )
+                _ ->
+                    ( model, Cmd.none )
 
         ( PreGame playerName gameId env, JoinGame ) ->
             case String.toInt gameId of
@@ -180,7 +172,8 @@ update msg model =
                             joinGameData.players
 
                         lobbyData =
-                            { player = player, players = players, gameId = 1 }
+                            -- { player = player, players = players, gameId = 1 }
+                            { player = RemoteData.NotAsked, players = RemoteData.NotAsked, gameId = 1 }
                     in
                     ( Lobby lobbyData env, Cmd.none )
 
@@ -283,7 +276,7 @@ startGame =
         ]
 
 
-listPlayers : List Player -> Html msg
+listPlayers : GraphQLResponse (List Player) -> Html msg
 listPlayers players =
     div [] [ text "list Players " ]
 
