@@ -137,11 +137,11 @@ gameQuery gameId =
 
 gameOptionalArgument : Int -> Query.GameOptionalArguments -> Query.GameOptionalArguments
 gameOptionalArgument gameId optionalArgs =
-    { optionalArgs | where_ = whereIdIsEq gameId }
+    { optionalArgs | where_ = whereGameIdIsEq gameId }
 
 
-whereIdIsEq : Int -> OptionalArgument InputObject.Game_bool_exp
-whereIdIsEq gameId =
+whereGameIdIsEq : Int -> OptionalArgument InputObject.Game_bool_exp
+whereGameIdIsEq gameId =
     Present <| InputObject.buildGame_bool_exp (\args -> { args | id = idIsEq gameId })
 
 
@@ -301,34 +301,38 @@ type alias StartGameResponseData =
 
 
 type alias StartGameResponse =
-    RemoteData (Graphql.Http.Error StartGameResponseData) StartGameResponseData
+    RemoteData (Graphql.Http.Error (Maybe StartGameResponseData)) (Maybe StartGameResponseData)
 
 
-startGame : Env -> Int -> String -> Response StartGameResponseData msg -> Cmd msg
+startGame : Env -> Int -> String -> Response (Maybe StartGameResponseData) msg -> Cmd msg
 startGame env gameId word toMsg =
-    -- makeGraphqlMutation env (startGameMutation gameId) toMsg
-    Cmd.none
+    makeGraphqlMutation env (startGameMutation gameId word) toMsg
 
 
+startGameMutation : Int -> String -> SelectionSet (Maybe StartGameResponseData) RootMutation
+startGameMutation gameId word =
+    Mutation.update_game
+        (startGameMutationOptionalArgs word)
+        (startGameWhereArgs gameId)
+        startGameMutationResponse
 
--- startGameMutation : Int -> SelectionSet (Maybe AffectedRowsResponse) RootMutation
--- startGameMutation gameId =
---     Mutation.insert_player
---         identity
---         (startGameArgs gameId)
---         playerAffectedRowsResponseSelection
--- startGameArgs : Int -> Mutation.InsertPlayerRequiredArguments
--- startGameArgs gameId =
---     Mutation.InsertPlayerRequiredArguments [ insertPlayerObjects gameId ]
--- insertPlayerObjects : Int -> InputObject.Player_insert_input
--- insertPlayerObjects gameId =
---     InputObject.buildPlayer_insert_input
---         (\args ->
---             { args
---                 | name = Present playerName
---                 , game_id = Present gameId
---             }
---         )
--- playerAffectedRowsResponseSelection : SelectionSet AffectedRowsResponse Object.Player_mutation_response
--- playerAffectedRowsResponseSelection =
---     SelectionSet.map AffectedRowsResponse PlayerMutation.affected_rows
+
+startGameMutationOptionalArgs : String -> Mutation.UpdateGameOptionalArguments -> Mutation.UpdateGameOptionalArguments
+startGameMutationOptionalArgs word optionalArgs =
+    { optionalArgs | set_ = Present (startGameSetInputArgs word) }
+
+
+startGameSetInputArgs : String -> InputObject.Game_set_input
+startGameSetInputArgs word =
+    InputObject.buildGame_set_input (\args -> { args | word = Present word, active = Present True })
+
+
+startGameWhereArgs : Int -> Mutation.UpdateGameRequiredArguments
+startGameWhereArgs gameId =
+    Mutation.UpdateGameRequiredArguments
+        (InputObject.buildGame_bool_exp (\args -> { args | id = idIsEq gameId }))
+
+
+startGameMutationResponse : SelectionSet () Object.Game_mutation_response
+startGameMutationResponse =
+    SelectionSet.succeed ()
