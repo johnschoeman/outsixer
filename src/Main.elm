@@ -88,6 +88,7 @@ type Msg
     | ShufflePlayers Int
     | ReceivedStartGameResponse API.StartGameResponse
     | ReceivedAssignRoleResponse API.AssignRoleResponse
+    | ExitGame
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -179,8 +180,16 @@ update msg model =
                         Just game ->
                             if game.active then
                                 let
+                                    player =
+                                        case List.head <| List.filter (\p -> p.id == lobbyData.player.id) game.players of
+                                            Just p ->
+                                                p
+
+                                            Nothing ->
+                                                lobbyData.player
+
                                     gameData =
-                                        { player = lobbyData.player
+                                        { player = player
                                         , game =
                                             { id = game.id
                                             , players = game.players
@@ -210,25 +219,6 @@ update msg model =
                     Player.assignRoles seedInt lobbyData.players
             in
             ( model, startGame env lobbyData.gameId playersWithRoles )
-
-        ( Lobby _ env, ReceivedStartGameResponse response ) ->
-            case response of
-                RemoteData.Success startGameData ->
-                    let
-                        player =
-                            { id = 1, name = "name", role = Just "Master" }
-
-                        players =
-                            [ player ]
-
-                        gameData =
-                            { player = player, players = players, word = "Bunny" }
-                    in
-                    -- ( InGame gameData env, Cmd.none )
-                    ( model, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
 
         ( Lobby { player, gameId } env, ExitLobby ) ->
             ( PreGame player.name (String.fromInt gameId) False env, Cmd.none )
@@ -284,9 +274,7 @@ page model =
             lobbyScreen player players gameId
 
         InGame { player, game } _ ->
-            div []
-                [ text "Playing Game..."
-                ]
+            gameScreen player game
 
 
 
@@ -382,6 +370,40 @@ errorMessage error =
 
         Graphql.Http.HttpError httpError ->
             div [] [ text <| API.showHttpError httpError ]
+
+
+
+---- GAME SCREEN ----
+
+
+gameScreen : Player -> Game -> Html Msg
+gameScreen player game =
+    div []
+        [ h1 [] [ text "Outsixer" ]
+        , playerInfo player game.word
+        , exitGameButton
+        ]
+
+
+playerInfo : Player -> String -> Html msg
+playerInfo player word =
+    case player.role of
+        Just "Master" ->
+            div [] [ text "you are the Master" ]
+
+        Just "Insider" ->
+            div [] [ text "you are the Insider" ]
+
+        Just "Commoner" ->
+            div [] [ text "you are a Commoner" ]
+
+        _ ->
+            div [] [ text "I did a bad job programming this." ]
+
+
+exitGameButton : Html Msg
+exitGameButton =
+    button [ onClick ExitGame ] [ text "Exit Game" ]
 
 
 
