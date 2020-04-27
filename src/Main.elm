@@ -6,9 +6,10 @@ import Env exposing (Env)
 import Game exposing (Game)
 import Graphql.Http
 import Html exposing (Html, button, div, h1, img, input, label, text)
-import Html.Attributes exposing (src)
+import Html.Attributes exposing (disabled, src)
 import Html.Events exposing (onClick, onInput)
 import Player exposing (Player, Role)
+import Random
 import RemoteData exposing (RemoteData)
 import Time
 
@@ -18,9 +19,13 @@ import Time
 
 
 type Model
-    = PreGame PlayerName GameId Env
+    = PreGame PlayerName GameId Loading Env
     | Lobby LobbyState Env
     | InGame GameState Env
+
+
+type alias Loading =
+    Bool
 
 
 type alias PlayerName =
@@ -44,8 +49,7 @@ type alias LobbyState =
 
 type alias GameState =
     { player : Player
-    , players : List Player
-    , word : String
+    , game : Game
     }
 
 
@@ -61,7 +65,7 @@ init { apiEndpoint, apiKey } =
         env =
             { apiEndpoint = apiEndpoint, apiKey = apiKey }
     in
-    ( PreGame "" "" env
+    ( PreGame "" "" False env
     , Cmd.none
     )
 
@@ -78,28 +82,36 @@ type Msg
     | ReceivedCreateGameResponse API.CreateGameResponse
     | JoinLobby
     | ReceivedJoinLobbyResponse API.JoinLobbyResponse
+    | ExitLobby
     | ReceivedGameResponse API.GameResponse
     | StartGame
+    | ShufflePlayers Int
     | ReceivedStartGameResponse API.StartGameResponse
+    | ReceivedAssignRoleResponse API.AssignRoleResponse
+    | ExitGame
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( model, msg ) of
-        ( PreGame _ gameId env, UpdatePlayerName playerName ) ->
-            ( PreGame playerName gameId env, Cmd.none )
+        ( PreGame _ gameId loading env, UpdatePlayerName playerName ) ->
+            ( PreGame playerName gameId loading env, Cmd.none )
 
-        ( PreGame playerName _ env, UpdateGameId gameId ) ->
-            ( PreGame playerName gameId env, Cmd.none )
+        ( PreGame playerName _ loading env, UpdateGameId gameId ) ->
+            ( PreGame playerName gameId loading env, Cmd.none )
 
-        ( PreGame playerName _ env, CreateGame ) ->
+        ( PreGame playerName gameId loading env, CreateGame ) ->
             let
                 gameName =
                     "GAME"
             in
-            ( model, API.createGame env gameName ReceivedCreateGameResponse )
+            if String.length playerName > 0 then
+                ( PreGame playerName gameId True env, API.createGame env gameName ReceivedCreateGameResponse )
 
-        ( PreGame playerName _ env, ReceivedCreateGameResponse response ) ->
+            else
+                ( model, Cmd.none )
+
+        ( PreGame playerName _ loading env, ReceivedCreateGameResponse response ) ->
             case response of
                 RemoteData.Success createGameData ->
                     case createGameData of
@@ -117,15 +129,19 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        ( PreGame playerName gameId env, JoinLobby ) ->
+        ( PreGame playerName gameId loading env, JoinLobby ) ->
             case String.toInt gameId of
                 Just id ->
-                    ( model, API.joinLobby env playerName id ReceivedJoinLobbyResponse )
+                    if String.length playerName > 0 then
+                        ( PreGame playerName gameId True env, API.joinLobby env playerName id ReceivedJoinLobbyResponse )
+
+                    else
+                        ( model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
 
-        ( PreGame _ _ env, ReceivedJoinLobbyResponse response ) ->
+        ( PreGame playerName gameId loading env, ReceivedJoinLobbyResponse response ) ->
             case response of
                 RemoteData.Success joinLobbyData ->
                     case joinLobbyData of
@@ -143,15 +159,15 @@ update msg model =
                                     ( Lobby lobbyData env, Cmd.none )
 
                                 Nothing ->
-                                    ( model, Cmd.none )
+                                    ( PreGame playerName gameId False env, Cmd.none )
 
                         Nothing ->
-                            ( model, Cmd.none )
+                            ( PreGame playerName gameId False env, Cmd.none )
 
                 _ ->
-                    ( model, Cmd.none )
+                    ( PreGame playerName gameId False env, Cmd.none )
 
-        ( PreGame _ _ _, _ ) ->
+        ( PreGame _ _ _ _, _ ) ->
             ( model, Cmd.none )
 
         ( Lobby { gameId } env, Tick _ ) ->
@@ -164,10 +180,23 @@ update msg model =
                         Just game ->
                             if game.active then
                                 let
+                                    player =
+                                        case List.head <| List.filter (\p -> p.id == lobbyData.player.id) game.players of
+                                            Just p ->
+                                                p
+
+                                            Nothing ->
+                                                lobbyData.player
+
                                     gameData =
-                                        { player = lobbyData.player
-                                        , players = Debug.log "players" game.players
-                                        , word = game.word
+                                        { player = player
+                                        , game =
+                                            { id = game.id
+                                            , players = game.players
+                                            , word = game.word
+                                            , name = game.name
+                                            , active = game.active
+                                            }
                                         }
                                 in
                                 ( InGame gameData env, Cmd.none )
@@ -182,36 +211,39 @@ update msg model =
                     ( model, Cmd.none )
 
         ( Lobby lobbyData env, StartGame ) ->
+            ( model, Random.generate ShufflePlayers (Random.int Random.minInt Random.maxInt) )
+
+        ( Lobby lobbyData env, ShufflePlayers seedInt ) ->
             let
-                word =
-                    "Word"
+                playersWithRoles =
+                    Player.assignRoles seedInt lobbyData.players
             in
-            ( model, API.startGame env lobbyData.gameId word ReceivedStartGameResponse )
+            ( model, startGame env lobbyData.gameId playersWithRoles )
 
-        ( Lobby _ env, ReceivedStartGameResponse response ) ->
-            case response of
-                RemoteData.Success startGameData ->
-                    let
-                        player =
-                            { id = 1, name = "name", role = Just "Master" }
-
-                        players =
-                            [ player ]
-
-                        gameData =
-                            { player = player, players = players, word = "Bunny" }
-                    in
-                    -- ( InGame gameData env, Cmd.none )
-                    ( model, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
+        ( Lobby { player, gameId } env, ExitLobby ) ->
+            ( PreGame player.name (String.fromInt gameId) False env, Cmd.none )
 
         ( Lobby _ _, _ ) ->
             ( model, Cmd.none )
 
         ( InGame _ _, _ ) ->
             ( model, Cmd.none )
+
+
+startGame : Env -> Int -> List Player -> Cmd Msg
+startGame env gameId players =
+    let
+        word =
+            "BZX"
+    in
+    Cmd.batch <|
+        API.startGame env gameId word ReceivedStartGameResponse
+            :: List.map (assignRoleMsg env) players
+
+
+assignRoleMsg : Env -> Player -> Cmd Msg
+assignRoleMsg env player =
+    API.assignPlayerRole env player.id player.role ReceivedAssignRoleResponse
 
 
 
@@ -235,54 +267,81 @@ view model =
 page : Model -> Html Msg
 page model =
     case model of
-        PreGame playerName gameId _ ->
-            div []
-                [ h1 [] [ text "Outsixer" ]
-                , nameInput playerName
-                , joinGame gameId
-                , createNewGame
-                ]
+        PreGame playerName gameId loading _ ->
+            preGameScreen playerName gameId loading
 
         Lobby { player, players, gameId } _ ->
-            div []
-                [ text <| "Lobby : " ++ String.fromInt gameId
-                , h1 [] [ text "players" ]
-                , listPlayers players
-                , startGame
-                ]
+            lobbyScreen player players gameId
 
-        InGame { player, players, word } _ ->
-            div []
-                [ text "Playing Game..."
-                ]
+        InGame { player, game } _ ->
+            gameScreen player game
 
 
-nameInput : String -> Html Msg
-nameInput name =
+
+---- PREGAME SCREEN ----
+
+
+preGameScreen : String -> String -> Bool -> Html Msg
+preGameScreen playerName gameId loading =
+    div []
+        [ h1 [] [ text "Outsixer" ]
+        , nameInput playerName loading
+        , joinGame gameId loading
+        , createNewGame loading
+        , loadingIndicator loading
+        ]
+
+
+nameInput : String -> Bool -> Html Msg
+nameInput name loading =
     div []
         [ label [] [ text "Player Name: " ]
-        , input [ onInput UpdatePlayerName ] [ text name ]
+        , input [ onInput UpdatePlayerName, disabled loading ] [ text name ]
         ]
 
 
-joinGame : String -> Html Msg
-joinGame gameName =
+joinGame : String -> Bool -> Html Msg
+joinGame gameName loading =
     div []
         [ label [] [ text "Game Name: " ]
-        , input [ onInput UpdateGameId ] [ text gameName ]
-        , button [ onClick JoinLobby ] [ text "Join Game" ]
+        , input [ onInput UpdateGameId, disabled loading ] [ text gameName ]
+        , button [ onClick JoinLobby, disabled loading ] [ text "Join Game" ]
         ]
 
 
-createNewGame : Html Msg
-createNewGame =
+createNewGame : Bool -> Html Msg
+createNewGame loading =
     div []
-        [ button [ onClick CreateGame ] [ text "Create Game" ]
+        [ button [ onClick CreateGame, disabled loading ] [ text "Create Game" ]
         ]
 
 
-startGame : Html Msg
-startGame =
+loadingIndicator : Bool -> Html Msg
+loadingIndicator loading =
+    if loading then
+        div [] [ text "loading..." ]
+
+    else
+        text ""
+
+
+
+---- LOBBY SCREEN ----
+
+
+lobbyScreen : Player -> List Player -> Int -> Html Msg
+lobbyScreen player players gameId =
+    div []
+        [ text <| "Lobby : " ++ String.fromInt gameId
+        , h1 [] [ text "players" ]
+        , listPlayers players
+        , startGameButton
+        , exitLobby
+        ]
+
+
+startGameButton : Html Msg
+startGameButton =
     div []
         [ button [ onClick StartGame ] [ text "Start Game" ]
         ]
@@ -298,6 +357,11 @@ playerListItem player =
     div [] [ text player.name ]
 
 
+exitLobby : Html Msg
+exitLobby =
+    button [ onClick ExitLobby ] [ text "Exit Lobby" ]
+
+
 errorMessage : Graphql.Http.Error d -> Html msg
 errorMessage error =
     case error of
@@ -306,6 +370,40 @@ errorMessage error =
 
         Graphql.Http.HttpError httpError ->
             div [] [ text <| API.showHttpError httpError ]
+
+
+
+---- GAME SCREEN ----
+
+
+gameScreen : Player -> Game -> Html Msg
+gameScreen player game =
+    div []
+        [ h1 [] [ text "Outsixer" ]
+        , playerInfo player game.word
+        , exitGameButton
+        ]
+
+
+playerInfo : Player -> String -> Html msg
+playerInfo player word =
+    case player.role of
+        Just "Master" ->
+            div [] [ text "you are the Master" ]
+
+        Just "Insider" ->
+            div [] [ text "you are the Insider" ]
+
+        Just "Commoner" ->
+            div [] [ text "you are a Commoner" ]
+
+        _ ->
+            div [] [ text "I did a bad job programming this." ]
+
+
+exitGameButton : Html Msg
+exitGameButton =
+    button [ onClick ExitGame ] [ text "Exit Game" ]
 
 
 
