@@ -346,3 +346,58 @@ startGameWhereArgs gameId =
 startGameMutationResponse : SelectionSet () Object.Game_mutation_response
 startGameMutationResponse =
     SelectionSet.succeed ()
+
+
+
+---- ASSIGN PLAYER ROLE ----
+
+
+type alias AssignPlayerRoleResponseData =
+    ()
+
+
+type alias AssignRoleResponse =
+    RemoteData (Graphql.Http.Error (Maybe AssignPlayerRoleResponseData)) (Maybe AssignPlayerRoleResponseData)
+
+
+assignPlayerRole : Env -> Int -> Maybe String -> Response (Maybe AssignPlayerRoleResponseData) msg -> Cmd msg
+assignPlayerRole env playerId maybeRole toMsg =
+    let
+        role =
+            case maybeRole of
+                Just r ->
+                    r
+
+                Nothing ->
+                    "Commoner"
+    in
+    makeGraphqlMutation env (assignPlayerRoleMutation playerId role) toMsg
+
+
+assignPlayerRoleMutation : Int -> String -> SelectionSet (Maybe StartGameResponseData) RootMutation
+assignPlayerRoleMutation playerId role =
+    Mutation.update_player
+        (assignRoleMutationOptionalArgs role)
+        (assignRoleWhereArgs playerId)
+        assignRoleMutationResponse
+
+
+assignRoleMutationOptionalArgs : String -> Mutation.UpdatePlayerOptionalArguments -> Mutation.UpdatePlayerOptionalArguments
+assignRoleMutationOptionalArgs role optionalArgs =
+    { optionalArgs | set_ = Present (assignRoleSetInputArgs role) }
+
+
+assignRoleSetInputArgs : String -> InputObject.Player_set_input
+assignRoleSetInputArgs role =
+    InputObject.buildPlayer_set_input (\args -> { args | role = Present role })
+
+
+assignRoleWhereArgs : Int -> Mutation.UpdatePlayerRequiredArguments
+assignRoleWhereArgs playerId =
+    Mutation.UpdatePlayerRequiredArguments
+        (InputObject.buildPlayer_bool_exp (\args -> { args | id = idIsEq playerId }))
+
+
+assignRoleMutationResponse : SelectionSet () Object.Player_mutation_response
+assignRoleMutationResponse =
+    SelectionSet.succeed ()

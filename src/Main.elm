@@ -9,6 +9,7 @@ import Html exposing (Html, button, div, h1, img, input, label, text)
 import Html.Attributes exposing (disabled, src)
 import Html.Events exposing (onClick, onInput)
 import Player exposing (Player, Role)
+import Random
 import RemoteData exposing (RemoteData)
 import Time
 
@@ -84,7 +85,9 @@ type Msg
     | ExitLobby
     | ReceivedGameResponse API.GameResponse
     | StartGame
+    | ShufflePlayers Int
     | ReceivedStartGameResponse API.StartGameResponse
+    | ReceivedAssignRoleResponse API.AssignRoleResponse
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -199,11 +202,14 @@ update msg model =
                     ( model, Cmd.none )
 
         ( Lobby lobbyData env, StartGame ) ->
+            ( model, Random.generate ShufflePlayers (Random.int Random.minInt Random.maxInt) )
+
+        ( Lobby lobbyData env, ShufflePlayers seedInt ) ->
             let
-                word =
-                    "Word"
+                playersWithRoles =
+                    Player.assignRoles seedInt lobbyData.players
             in
-            ( model, API.startGame env lobbyData.gameId word ReceivedStartGameResponse )
+            ( model, startGame env lobbyData.gameId playersWithRoles )
 
         ( Lobby _ env, ReceivedStartGameResponse response ) ->
             case response of
@@ -232,6 +238,22 @@ update msg model =
 
         ( InGame _ _, _ ) ->
             ( model, Cmd.none )
+
+
+startGame : Env -> Int -> List Player -> Cmd Msg
+startGame env gameId players =
+    let
+        word =
+            "BZX"
+    in
+    Cmd.batch <|
+        API.startGame env gameId word ReceivedStartGameResponse
+            :: List.map (assignRoleMsg env) players
+
+
+assignRoleMsg : Env -> Player -> Cmd Msg
+assignRoleMsg env player =
+    API.assignPlayerRole env player.id player.role ReceivedAssignRoleResponse
 
 
 
@@ -325,13 +347,13 @@ lobbyScreen player players gameId =
         [ text <| "Lobby : " ++ String.fromInt gameId
         , h1 [] [ text "players" ]
         , listPlayers players
-        , startGame
+        , startGameButton
         , exitLobby
         ]
 
 
-startGame : Html Msg
-startGame =
+startGameButton : Html Msg
+startGameButton =
     div []
         [ button [ onClick StartGame ] [ text "Start Game" ]
         ]
