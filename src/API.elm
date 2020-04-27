@@ -115,8 +115,10 @@ type alias GameResponseData =
 
 
 type alias GameData =
-    { active : Bool
+    { id : Int
+    , name : String
     , word : String
+    , active : Bool
     , players : List Player
     }
 
@@ -152,9 +154,11 @@ idIsEq gameId =
 
 gameSelection : SelectionSet GameData Object.Game
 gameSelection =
-    SelectionSet.map3 GameData
-        GameObject.active
+    SelectionSet.map5 GameData
+        GameObject.id
+        GameObject.name
         GameObject.word
+        GameObject.active
         (GameObject.players identity playerFragment)
 
 
@@ -173,7 +177,14 @@ gameSelection =
 
 
 type alias CreateGameResponseData =
-    { returning : List Game
+    { returning : List CreateGameData
+    }
+
+
+type alias CreateGameData =
+    { id : Int
+    , name : String
+    , active : Bool
     }
 
 
@@ -191,7 +202,7 @@ createGameMutation name =
     Mutation.insert_game
         identity
         (insertGameArgs name)
-        gameAffectedRowsResponseSelection
+        createGameMutationResponse
 
 
 insertGameArgs : String -> Mutation.InsertGameRequiredArguments
@@ -204,19 +215,18 @@ insertGameObjects name =
     InputObject.buildGame_insert_input (\args -> { args | name = Present name })
 
 
-gameAffectedRowsResponseSelection : SelectionSet CreateGameResponseData Object.Game_mutation_response
-gameAffectedRowsResponseSelection =
+createGameMutationResponse : SelectionSet CreateGameResponseData Object.Game_mutation_response
+createGameMutationResponse =
     SelectionSet.map CreateGameResponseData
         (GameMutation.returning gameFragment)
 
 
-gameFragment : SelectionSet Game Object.Game
+gameFragment : SelectionSet CreateGameData Object.Game
 gameFragment =
-    SelectionSet.succeed Game
+    SelectionSet.succeed CreateGameData
         |> with GameObject.id
         |> with GameObject.name
         |> with GameObject.active
-        |> with GameObject.word
 
 
 
