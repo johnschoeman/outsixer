@@ -81,6 +81,7 @@ type Msg
     | ReceivedCreateGameResponse API.CreateGameResponse
     | JoinLobby
     | ReceivedJoinLobbyResponse API.JoinLobbyResponse
+    | ExitLobby
     | ReceivedGameResponse API.GameResponse
     | StartGame
     | ReceivedStartGameResponse API.StartGameResponse
@@ -100,7 +101,11 @@ update msg model =
                 gameName =
                     "GAME"
             in
-            ( PreGame playerName gameId True env, API.createGame env gameName ReceivedCreateGameResponse )
+            if String.length playerName > 0 then
+                ( PreGame playerName gameId True env, API.createGame env gameName ReceivedCreateGameResponse )
+
+            else
+                ( model, Cmd.none )
 
         ( PreGame playerName _ loading env, ReceivedCreateGameResponse response ) ->
             case response of
@@ -123,7 +128,11 @@ update msg model =
         ( PreGame playerName gameId loading env, JoinLobby ) ->
             case String.toInt gameId of
                 Just id ->
-                    ( PreGame playerName gameId True env, API.joinLobby env playerName id ReceivedJoinLobbyResponse )
+                    if String.length playerName > 0 then
+                        ( PreGame playerName gameId True env, API.joinLobby env playerName id ReceivedJoinLobbyResponse )
+
+                    else
+                        ( model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -215,6 +224,9 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        ( Lobby { player, gameId } env, ExitLobby ) ->
+            ( PreGame player.name (String.fromInt gameId) False env, Cmd.none )
+
         ( Lobby _ _, _ ) ->
             ( model, Cmd.none )
 
@@ -247,12 +259,7 @@ page model =
             preGameScreen playerName gameId loading
 
         Lobby { player, players, gameId } _ ->
-            div []
-                [ text <| "Lobby : " ++ String.fromInt gameId
-                , h1 [] [ text "players" ]
-                , listPlayers players
-                , startGame
-                ]
+            lobbyScreen player players gameId
 
         InGame { player, game } _ ->
             div []
@@ -312,6 +319,17 @@ loadingIndicator loading =
 ---- LOBBY SCREEN ----
 
 
+lobbyScreen : Player -> List Player -> Int -> Html Msg
+lobbyScreen player players gameId =
+    div []
+        [ text <| "Lobby : " ++ String.fromInt gameId
+        , h1 [] [ text "players" ]
+        , listPlayers players
+        , startGame
+        , exitLobby
+        ]
+
+
 startGame : Html Msg
 startGame =
     div []
@@ -327,6 +345,11 @@ listPlayers players =
 playerListItem : Player -> Html msg
 playerListItem player =
     div [] [ text player.name ]
+
+
+exitLobby : Html Msg
+exitLobby =
+    button [ onClick ExitLobby ] [ text "Exit Lobby" ]
 
 
 errorMessage : Graphql.Http.Error d -> Html msg
