@@ -90,7 +90,8 @@ type Msg
     | GenerateGameData ( Int, String )
     | ReceivedStartGameResponse API.StartGameResponse
     | ReceivedAssignRoleResponse API.AssignRoleResponse
-    | ExitGame
+    | EndGame
+    | ReceivedEndGameResponse API.EndGameResponse
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -244,8 +245,40 @@ update msg model =
         ( Lobby _ _, _ ) ->
             ( model, Cmd.none )
 
-        ( InGame { player } env, ExitGame ) ->
-            ( PreGame player.name "" False env, Cmd.none )
+        ( InGame { game } env, Tick _ ) ->
+            ( model, API.fetchGame env game.id ReceivedGameResponse )
+
+        ( InGame { player } env, ReceivedGameResponse response ) ->
+            case response of
+                RemoteData.Success responseData ->
+                    case List.head responseData of
+                        Just game ->
+                            if not game.active then
+                                ( Lobby { player = player, players = game.players, gameId = game.id } env, Cmd.none )
+
+                            else
+                                ( model, Cmd.none )
+
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        ( InGame { game } env, EndGame ) ->
+            ( model, endGame env game )
+
+        ( InGame { player, game } env, ReceivedEndGameResponse response ) ->
+            case response of
+                RemoteData.Success data ->
+                    let
+                        b =
+                            Debug.log "end game response" data
+                    in
+                    ( Lobby { player = player, players = game.players, gameId = game.id } env, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         ( InGame _ _, _ ) ->
             ( model, Cmd.none )
@@ -261,6 +294,11 @@ startGame env gameId word players =
 assignRoleMsg : Env -> Player -> Cmd Msg
 assignRoleMsg env player =
     API.assignPlayerRole env player.id player.role ReceivedAssignRoleResponse
+
+
+endGame : Env -> Game -> Cmd Msg
+endGame env game =
+    API.endGame env game.id ReceivedEndGameResponse
 
 
 
@@ -406,7 +444,7 @@ gameScreen player game =
     div []
         [ h1 [] [ text "Outsixer" ]
         , playerInfo player game.word
-        , exitGameButton
+        , endGameButton
         ]
 
 
@@ -432,9 +470,9 @@ playerInfo player word =
             div [] [ text "This game has already started" ]
 
 
-exitGameButton : Html Msg
-exitGameButton =
-    button [ onClick ExitGame ] [ text "Exit Game" ]
+endGameButton : Html Msg
+endGameButton =
+    button [ onClick EndGame ] [ text "End Game" ]
 
 
 

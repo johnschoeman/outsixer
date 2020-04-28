@@ -399,6 +399,55 @@ startGameMutationResponse =
 
 
 
+---- END GAME ----
+-- mutation($id: !Int) {
+--   update_game(where: {id: {_eq: 10}}, _set: {active: false})
+-- }
+
+
+type alias EndGameResponseData =
+    ()
+
+
+type alias EndGameResponse =
+    RemoteData (Graphql.Http.Error (Maybe EndGameResponseData)) (Maybe EndGameResponseData)
+
+
+endGame : Env -> Int -> Response (Maybe EndGameResponseData) msg -> Cmd msg
+endGame env gameId toMsg =
+    makeGraphqlMutation env (endGameMutation gameId) toMsg
+
+
+endGameMutation : Int -> SelectionSet (Maybe EndGameResponseData) RootMutation
+endGameMutation gameId =
+    Mutation.update_game
+        endGameMutationOptionalArgs
+        (endGameWhereArgs gameId)
+        endGameMutationResponse
+
+
+endGameMutationOptionalArgs : Mutation.UpdateGameOptionalArguments -> Mutation.UpdateGameOptionalArguments
+endGameMutationOptionalArgs optionalArgs =
+    { optionalArgs | set_ = Present endGameSetInputArgs }
+
+
+endGameSetInputArgs : InputObject.Game_set_input
+endGameSetInputArgs =
+    InputObject.buildGame_set_input (\args -> { args | active = Present False })
+
+
+endGameWhereArgs : Int -> Mutation.UpdateGameRequiredArguments
+endGameWhereArgs gameId =
+    Mutation.UpdateGameRequiredArguments
+        (InputObject.buildGame_bool_exp (\args -> { args | id = idIsEq gameId }))
+
+
+endGameMutationResponse : SelectionSet () Object.Game_mutation_response
+endGameMutationResponse =
+    SelectionSet.succeed ()
+
+
+
 ---- ASSIGN PLAYER ROLE ----
 
 
@@ -424,7 +473,7 @@ assignPlayerRole env playerId maybeRole toMsg =
     makeGraphqlMutation env (assignPlayerRoleMutation playerId role) toMsg
 
 
-assignPlayerRoleMutation : Int -> String -> SelectionSet (Maybe StartGameResponseData) RootMutation
+assignPlayerRoleMutation : Int -> String -> SelectionSet (Maybe AssignPlayerRoleResponseData) RootMutation
 assignPlayerRoleMutation playerId role =
     Mutation.update_player
         (assignRoleMutationOptionalArgs role)
