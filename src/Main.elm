@@ -1,17 +1,18 @@
 module Main exposing (..)
 
-import API exposing (GraphQLResponse)
+import API
 import Browser
 import Env exposing (Env)
 import Game exposing (Game)
 import Graphql.Http
-import Html exposing (Html, button, div, h1, img, input, label, text)
-import Html.Attributes exposing (disabled, src)
+import Html exposing (Html, button, div, h1, img, input, label, p, text)
+import Html.Attributes exposing (disabled, src, value)
 import Html.Events exposing (onClick, onInput)
-import Player exposing (Player, Role)
+import Player exposing (Player)
 import Random
-import RemoteData exposing (RemoteData)
+import RemoteData
 import Time
+import Word
 
 
 
@@ -85,7 +86,7 @@ type Msg
     | ExitLobby
     | ReceivedGameResponse API.GameResponse
     | StartGame
-    | ShufflePlayers Int
+    | GenerateGameData ( Int, String )
     | ReceivedStartGameResponse API.StartGameResponse
     | ReceivedAssignRoleResponse API.AssignRoleResponse
     | ExitGame
@@ -211,14 +212,20 @@ update msg model =
                     ( model, Cmd.none )
 
         ( Lobby lobbyData env, StartGame ) ->
-            ( model, Random.generate ShufflePlayers (Random.int Random.minInt Random.maxInt) )
+            let
+                randomData =
+                    Random.pair (Random.int Random.minInt Random.maxInt) Word.randomWord
+            in
+            ( model
+            , Random.generate GenerateGameData randomData
+            )
 
-        ( Lobby lobbyData env, ShufflePlayers seedInt ) ->
+        ( Lobby lobbyData env, GenerateGameData ( seedInt, word ) ) ->
             let
                 playersWithRoles =
                     Player.assignRoles seedInt lobbyData.players
             in
-            ( model, startGame env lobbyData.gameId playersWithRoles )
+            ( model, startGame env lobbyData.gameId word playersWithRoles )
 
         ( Lobby { player, gameId } env, ExitLobby ) ->
             ( PreGame player.name (String.fromInt gameId) False env, Cmd.none )
@@ -226,16 +233,15 @@ update msg model =
         ( Lobby _ _, _ ) ->
             ( model, Cmd.none )
 
+        ( InGame { player } env, ExitGame ) ->
+            ( PreGame player.name "" False env, Cmd.none )
+
         ( InGame _ _, _ ) ->
             ( model, Cmd.none )
 
 
-startGame : Env -> Int -> List Player -> Cmd Msg
-startGame env gameId players =
-    let
-        word =
-            "BZX"
-    in
+startGame : Env -> Int -> String -> List Player -> Cmd Msg
+startGame env gameId word players =
     Cmd.batch <|
         API.startGame env gameId word ReceivedStartGameResponse
             :: List.map (assignRoleMsg env) players
@@ -286,8 +292,8 @@ preGameScreen playerName gameId loading =
     div []
         [ h1 [] [ text "Outsixer" ]
         , nameInput playerName loading
-        , joinGame gameId loading
-        , createNewGame loading
+        , joinGame gameId playerName loading
+        , createNewGame playerName loading
         , loadingIndicator loading
         ]
 
@@ -296,23 +302,31 @@ nameInput : String -> Bool -> Html Msg
 nameInput name loading =
     div []
         [ label [] [ text "Player Name: " ]
-        , input [ onInput UpdatePlayerName, disabled loading ] [ text name ]
+        , input [ onInput UpdatePlayerName, disabled loading, value name ] [ text name ]
         ]
 
 
-joinGame : String -> Bool -> Html Msg
-joinGame gameName loading =
+joinGame : String -> String -> Bool -> Html Msg
+joinGame gameName playerName loading =
+    let
+        d =
+            loading || (String.length gameName == 0) || (String.length playerName == 0)
+    in
     div []
         [ label [] [ text "Game Name: " ]
-        , input [ onInput UpdateGameId, disabled loading ] [ text gameName ]
-        , button [ onClick JoinLobby, disabled loading ] [ text "Join Game" ]
+        , input [ onInput UpdateGameId ] [ text gameName ]
+        , button [ onClick JoinLobby, disabled d ] [ text "Join Game" ]
         ]
 
 
-createNewGame : Bool -> Html Msg
-createNewGame loading =
+createNewGame : String -> Bool -> Html Msg
+createNewGame playerName loading =
+    let
+        d =
+            loading || (String.length playerName == 0)
+    in
     div []
-        [ button [ onClick CreateGame, disabled loading ] [ text "Create Game" ]
+        [ button [ onClick CreateGame, disabled d ] [ text "Create Game" ]
         ]
 
 
@@ -389,16 +403,22 @@ playerInfo : Player -> String -> Html msg
 playerInfo player word =
     case player.role of
         Just "Master" ->
-            div [] [ text "you are the Master" ]
+            div []
+                [ text "you are the Master"
+                , p [] [ text <| "the word is " ++ word ]
+                ]
 
         Just "Insider" ->
-            div [] [ text "you are the Insider" ]
+            div []
+                [ text "you are the Insider"
+                , p [] [ text <| "the word is " ++ word ]
+                ]
 
         Just "Commoner" ->
             div [] [ text "you are a Commoner" ]
 
         _ ->
-            div [] [ text "I did a bad job programming this." ]
+            div [] [ text "This game has already started" ]
 
 
 exitGameButton : Html Msg
