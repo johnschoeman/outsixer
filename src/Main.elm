@@ -84,6 +84,7 @@ type Msg
     | JoinLobby
     | ReceivedJoinLobbyResponse API.JoinLobbyResponse
     | ExitLobby
+    | ReceivedExitLobbyResponse API.ExitLobbyResponse
     | ReceivedGameResponse API.GameResponse
     | StartGame
     | GenerateGameData ( Int, String )
@@ -227,8 +228,18 @@ update msg model =
             in
             ( model, startGame env lobbyData.gameId word playersWithRoles )
 
-        ( Lobby { player, gameId } env, ExitLobby ) ->
-            ( PreGame player.name (String.fromInt gameId) False env, Cmd.none )
+        ( Lobby { player } env, ExitLobby ) ->
+            ( model
+            , API.exitLobby env player.id ReceivedExitLobbyResponse
+            )
+
+        ( Lobby { player, gameId } env, ReceivedExitLobbyResponse resposne ) ->
+            case resposne of
+                RemoteData.Success _ ->
+                    ( PreGame player.name (String.fromInt gameId) False env, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         ( Lobby _ _, _ ) ->
             ( model, Cmd.none )

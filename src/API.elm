@@ -301,6 +301,56 @@ playerFragment =
 
 
 
+---- EXIT LOBBY ----
+-- mutation($id: !Int) {
+--   delete_player(where: {id: {_eq: $id}}) {
+--     affected_rows
+--   }
+-- }
+
+
+type alias ExitLobbyResponseData =
+    { affected_rows : Int
+    }
+
+
+type alias ExitLobbyResponse =
+    RemoteData (Graphql.Http.Error (Maybe ExitLobbyResponseData)) (Maybe ExitLobbyResponseData)
+
+
+exitLobby : Env -> Int -> Response (Maybe ExitLobbyResponseData) msg -> Cmd msg
+exitLobby env playerId toMsg =
+    makeGraphqlMutation env (exitLobbyMutation playerId) toMsg
+
+
+exitLobbyMutation : Int -> SelectionSet (Maybe ExitLobbyResponseData) RootMutation
+exitLobbyMutation playerId =
+    Mutation.delete_player
+        (exitLobbyArgs playerId)
+        exitLobbyResponse
+
+
+exitLobbyArgs : Int -> Mutation.DeletePlayerRequiredArguments
+exitLobbyArgs playerId =
+    { where_ = wherePlayerIdIsEq playerId }
+
+
+exitLobbyResponse : SelectionSet ExitLobbyResponseData Object.Player_mutation_response
+exitLobbyResponse =
+    SelectionSet.map ExitLobbyResponseData PlayerMutation.affected_rows
+
+
+wherePlayerIdIsEq : Int -> InputObject.Player_bool_exp
+wherePlayerIdIsEq playerId =
+    InputObject.buildPlayer_bool_exp (\args -> { args | id = requiredIdIsEq playerId })
+
+
+requiredIdIsEq : Int -> OptionalArgument InputObject.Int_comparison_exp
+requiredIdIsEq id =
+    Present <| InputObject.buildInt_comparison_exp (\args -> { args | eq_ = Present id })
+
+
+
 ---- START GAME ----
 -- mutation($id: !Int $word: !String) {
 --   update_game(_set: {word: $word, active: true}, _inc: {id: $id})
