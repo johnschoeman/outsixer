@@ -282,10 +282,6 @@ update msg model =
         ( InGame { player, game } _ env, ReceivedEndGameResponse response ) ->
             case response of
                 RemoteData.Success data ->
-                    let
-                        b =
-                            Debug.log "end game response" data
-                    in
                     ( Lobby { player = player, players = game.players, gameId = game.id } env, Cmd.none )
 
                 _ ->

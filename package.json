@@ -7,9 +7,14 @@
     "test": "tests"
   },
   "scripts": {
+    "build": "elm-app build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate-types": "elm-graphql https://outsixer.herokuapp.com/v1/graphql --base Outsixer"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "create-elm-app": "^4.2.14",
+    "elm-format": "^0.8.3"
+  }
 }
