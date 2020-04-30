@@ -22,7 +22,7 @@ import Word
 type Model
     = PreGame PlayerName GameId Loading Env
     | Lobby LobbyState Env
-    | InGame GameState Env
+    | InGame GameState ClockTime Env
 
 
 type alias Loading =
@@ -39,6 +39,10 @@ type alias GameId =
 
 type alias Word =
     String
+
+
+type alias ClockTime =
+    Int
 
 
 type alias LobbyState =
@@ -202,7 +206,7 @@ update msg model =
                                             }
                                         }
                                 in
-                                ( InGame gameData env, Cmd.none )
+                                ( InGame gameData 300 env, Cmd.none )
 
                             else
                                 ( Lobby { lobbyData | players = game.players } env, Cmd.none )
@@ -245,10 +249,17 @@ update msg model =
         ( Lobby _ _, _ ) ->
             ( model, Cmd.none )
 
-        ( InGame { game } env, Tick _ ) ->
-            ( model, API.fetchGame env game.id ReceivedGameResponse )
+        ( InGame gameState clockTime env, Tick _ ) ->
+            let
+                game =
+                    gameState.game
 
-        ( InGame { player } env, ReceivedGameResponse response ) ->
+                nextTime =
+                    clockTime - 1
+            in
+            ( InGame gameState nextTime env, API.fetchGame env game.id ReceivedGameResponse )
+
+        ( InGame { player } _ env, ReceivedGameResponse response ) ->
             case response of
                 RemoteData.Success responseData ->
                     case List.head responseData of
@@ -265,10 +276,10 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        ( InGame { game } env, EndGame ) ->
+        ( InGame { game } _ env, EndGame ) ->
             ( model, endGame env game )
 
-        ( InGame { player, game } env, ReceivedEndGameResponse response ) ->
+        ( InGame { player, game } _ env, ReceivedEndGameResponse response ) ->
             case response of
                 RemoteData.Success data ->
                     let
@@ -280,7 +291,7 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        ( InGame _ _, _ ) ->
+        ( InGame _ _ _, _ ) ->
             ( model, Cmd.none )
 
 
@@ -328,8 +339,8 @@ page model =
         Lobby { player, players, gameId } _ ->
             lobbyScreen player players gameId
 
-        InGame { player, game } _ ->
-            gameScreen player game
+        InGame { player, game } clockTime _ ->
+            gameScreen player game clockTime
 
 
 
@@ -439,12 +450,13 @@ errorMessage error =
 ---- GAME SCREEN ----
 
 
-gameScreen : Player -> Game -> Html Msg
-gameScreen player game =
+gameScreen : Player -> Game -> ClockTime -> Html Msg
+gameScreen player game clockTime =
     div []
         [ h1 [] [ text "Outsixer" ]
         , playerInfo player game.word
         , endGameButton
+        , timeRemaining clockTime
         ]
 
 
@@ -473,6 +485,22 @@ playerInfo player word =
 endGameButton : Html Msg
 endGameButton =
     button [ onClick EndGame ] [ text "End Game" ]
+
+
+timeRemaining : ClockTime -> Html msg
+timeRemaining clockTime =
+    let
+        minutes =
+            String.fromInt <| clockTime // 60
+
+        seconds =
+            String.padLeft 2 '0' (String.fromInt <| modBy 60 clockTime)
+    in
+    if clockTime > 0 then
+        div [] [ text <| minutes ++ " : " ++ seconds ]
+
+    else
+        div [] [ text "Game over! Can you guess the insider?" ]
 
 
 
