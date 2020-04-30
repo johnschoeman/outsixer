@@ -6,7 +6,7 @@ import Env exposing (Env)
 import Game exposing (Game)
 import Graphql.Http
 import Html exposing (Html, button, div, h1, img, input, label, p, text)
-import Html.Attributes exposing (disabled, src, value)
+import Html.Attributes exposing (disabled, placeholder, src, style, value)
 import Html.Events exposing (onClick, onInput)
 import Player exposing (Player)
 import Random
@@ -347,18 +347,44 @@ preGameScreen : String -> String -> Bool -> Html Msg
 preGameScreen playerName gameId loading =
     div []
         [ h1 [] [ text "Outsixer" ]
-        , nameInput playerName loading
-        , joinGame gameId playerName loading
-        , createNewGame playerName loading
-        , loadingIndicator loading
+        , div
+            [ style "display" "flex"
+            , style "flex-direction" "column"
+            , style "align-items" "start"
+            , style "justify-content" "space-between"
+            , style "height" "100px"
+            , style "padding" "24px"
+            ]
+            [ nameInput playerName loading
+            , joinOrCreateGame gameId playerName loading
+            , loadingIndicator loading
+            ]
         ]
 
 
 nameInput : String -> Bool -> Html Msg
 nameInput name loading =
     div []
-        [ label [] [ text "Player Name: " ]
-        , input [ onInput UpdatePlayerName, disabled loading, value name ] [ text name ]
+        [ label [] [ text "Player Name:" ]
+        , input
+            [ onInput UpdatePlayerName
+            , placeholder "Your name"
+            , disabled loading
+            , value name
+            ]
+            [ text name ]
+        ]
+
+
+joinOrCreateGame : String -> String -> Bool -> Html Msg
+joinOrCreateGame gameName playerName loading =
+    div
+        [ style "display" "flex"
+        , style "flex-direction" "row"
+        ]
+        [ joinGame gameName playerName loading
+        , div [ style "flex" "1" ] [ text " Or " ]
+        , createNewGame gameName playerName loading
         ]
 
 
@@ -368,21 +394,21 @@ joinGame gameName playerName loading =
         d =
             loading || (String.length gameName == 0) || (String.length playerName == 0)
     in
-    div []
-        [ label [] [ text "Game Name: " ]
-        , input [ onInput UpdateGameId ] [ text gameName ]
+    div [ style "flex" "2" ]
+        [ label [] [ text "Lobby Number:" ]
+        , input [ onInput UpdateGameId, placeholder "e.g. 23" ] [ text gameName ]
         , button [ onClick JoinLobby, disabled d ] [ text "Join Game" ]
         ]
 
 
-createNewGame : String -> Bool -> Html Msg
-createNewGame playerName loading =
+createNewGame : String -> String -> Bool -> Html Msg
+createNewGame gameName playerName loading =
     let
         d =
-            loading || (String.length playerName == 0)
+            loading || (String.length playerName == 0) || (String.length gameName > 0)
     in
-    div []
-        [ button [ onClick CreateGame, disabled d ] [ text "Create Game" ]
+    div [ style "flex" "1" ]
+        [ button [ onClick CreateGame, disabled d ] [ text "Create New Game" ]
         ]
 
 
